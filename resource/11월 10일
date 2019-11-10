@@ -1,0 +1,912 @@
+#include <stdio.h>
+#include <Windows.h>
+#include <time.h>
+#include <conio.h>
+#include <stdlib.h>
+
+//색갈
+#ifndef __COLOR_LIST_
+#define __COLOR_LIST_
+
+enum {
+	black,
+	blue,
+	green,
+	cyan,
+	red,
+	purple,
+	brown,
+	lightgray,
+	darkgray,
+	lightblue,
+	lightgreen,
+	lightcyan,
+	lightred,
+	lightpurple,
+	yellow,
+	white,
+};
+
+#endif
+
+//구조체
+struct object {
+	int food;
+	int water;
+	int mask;
+	int healpack;
+	int gun;
+}obj;
+
+//함수
+void init();
+void gotoxy(int, int);
+void setColor(int, int);
+void titledraw();
+int menudraw();
+int frist_day();
+void multi();
+void mapdraw();
+void selectdraw();
+int select_chose();
+int object_draw();
+int object_select();
+int explore_select();
+int explore_explain();
+void infodraw();
+void character_a();
+void character_b();
+void character_c();
+int explore_object_select();
+
+//메크로
+//키보드 값
+#define UP 72
+#define DOWN 80
+#define LEFT 75
+#define RIGHT 77
+#define SELECT 13
+#define SPACEBAR 32
+
+int object_num;
+int explore_num;
+int explore_object;
+int days = 1;
+
+int main()
+{
+	obj.food = 6;
+	obj.gun = 0;
+	obj.healpack = 1;
+	obj.mask = 0;
+	obj.water = 6;
+	init();
+	while (1)
+	{
+		titledraw();
+		int menucode = menudraw();
+		if (menucode == 0) //게임시작
+		{
+			while (1)
+			{
+				system("cls");
+				mapdraw();
+				character_a();
+				character_b();
+				character_c();
+				selectdraw();
+				int select = select_chose();
+				if (select == 0) //정찰
+				{
+					selectdraw();
+					explore_explain();
+					explore_num = explore_select();
+					if (explore_num == 0) //여자
+					{
+						selectdraw();
+						explore_object= explore_object_select();
+						if (explore_object == 0)
+						{
+							if (obj.gun < 1)
+							{
+								selectdraw();
+								int x = 1;
+								int y = 24;
+								gotoxy(x, y);
+								printf("총이 없습니다. ");
+								gotoxy(x, y + 3);
+								printf("ENTER키를 눌러주세요......");
+								while (1)
+								{
+									if (keycontrol() == SELECT)
+									{
+										break;
+									}
+								}
+							}
+							obj.gun -= 1;
+						}
+						else if (explore_object == 30)
+						{
+							if (obj.gun < 1)
+							{
+								selectdraw();
+								int x = 1;
+								int y = 24;
+								gotoxy(x, y);
+								printf("총이 없습니다. ");
+								gotoxy(x, y + 3);
+								printf("ENTER키를 눌러주세요......");
+								while (1)
+								{
+									if (keycontrol() == SELECT)
+									{
+										break;
+									}
+								}
+							}
+							obj.gun -= 1;
+						}
+						else if (explore_object = 60)
+						{
+							if (obj.gun < 1)
+							{
+								selectdraw();
+								int x = 1;
+								int y = 24;
+								gotoxy(x, y);
+								printf("총이 없습니다. ");
+								gotoxy(x, y + 3);
+								printf("ENTER키를 눌러주세요......");
+								while (1)
+								{
+									if (keycontrol() == SELECT)
+									{
+										break;
+									}
+								}
+							}
+							obj.gun -= 1;
+						}
+					}
+					else if (explore_num == 20) //남자
+					{
+						selectdraw();
+						explore_object = explore_object_select();
+						if (explore_object == 0)
+						{
+
+						}
+						else if (explore_object == 30)
+						{
+
+						}
+						else if (explore_object = 60)
+						{
+
+						}
+					}
+					else if (explore_num == 40) //아이
+					{
+						selectdraw();
+						explore_object = explore_object_select();
+						if (explore_object == 0)
+						{
+
+						}
+						else if (explore_object == 30)
+						{
+
+						}
+						else if (explore_object = 60)
+						{
+
+						}
+					}
+					else if (explore_num == 60) //돌아가기
+					{
+						
+					}
+					
+				}
+				else if (select == 30) //캐릭터관리
+				{
+					selectdraw();
+					object_num = object_select();
+					if (object_num == 0) //식략
+					{
+						
+					}
+					else if (object_num == 20) //물
+					{
+						
+					}
+					else if (object_num == 40) //상태창
+					{
+						
+					}
+					else if (object_num == 60) //돌아가기
+					{
+						
+					}
+
+				}
+				else if (select == 60) //다음날
+				{
+
+				}
+
+
+			}
+		}
+		else if (menucode == 1) //게임설명
+		{
+			infodraw();
+		}
+		else if (menucode == 2) //종료
+		{
+			return 0;
+		}
+		system("cls");
+	}
+	return 0;
+}
+
+
+//game
+int menudraw()
+{
+	int x = 55;
+	int y = 25;
+	gotoxy(x - 2, y);
+	printf("> 게임시작");
+	gotoxy(x, y + 1);
+	printf("게임설명");
+	gotoxy(x + 2, y + 2);
+	printf("죵료");
+	while (1)
+	{
+		int n = keycontrol();
+		switch (n)
+		{
+		case UP:
+		{
+			if (y > 25)
+			{
+				gotoxy(x - 2, y);
+				printf(" ");
+				gotoxy(x - 2, --y);
+				printf(">");
+			}
+			break;
+		}
+		case DOWN:
+		{
+			if (y < 27)
+			{
+				gotoxy(x - 2, y);
+				printf(" ");
+				gotoxy(x - 2, ++y);
+				printf(">");
+			}
+			break;
+		}
+		case SELECT:
+		{
+			return y - 25;
+		}
+		}
+	}
+
+}
+
+void titledraw()
+{
+	printf("\n");
+	printf("\n");
+	printf("                 $@.  ;@@@@@@@   \n");
+	printf("                ,@*   *@~-----   \n");
+	printf("                !@;   @$         \n");
+	printf("               ,@@   :@,         \n");
+	printf("               =@*   @#          \n");
+	printf("              .@@,  ~@:          \n");
+	printf("               $#.  ;@-          \n");
+	printf("              .@=   @@$$$$=,     \n");
+	printf("              !@,  -@@@@@@@!     \n");
+	printf("              @@         !@,     \n");
+	printf("             ~@:         @@      8 888888888o.               .8.          `8.`8888.      ,8'    d888888o.  \n");
+	printf("             ;@~        :@-      8 8888    `^888.           .888.          `8.`8888.    ,8'   .`8888:' `88.\n");
+	printf("             ##         =@.      8 8888        `88.        :88888.          `8.`8888.  ,8'    8.`8888.   Y8\n");
+	printf("             @$   ##   .#=       8 8888         `88       . `88888.          `8.`8888.,8'     `8.`8888.\n");
+	printf("            $@   !@,   ,@!       8 8888          88      .8. `88888.          `8.`88888'       `8.`8888.\n");
+	printf("            @#   $@.   #@        8 8888          88     .8`8. `88888.          `8. 8888         `8.`8888.\n");
+	printf("           ~@;  ,@*    @$        8 8888         ,88    .8' `8. `88888.          `8 8888          `8.`8888. \n");
+	printf("           ;@-  ~@;   ;@-        8 8888    ,o88P'    .888888888. `88888.         8 8888      `8b.  ;8.`8888\n");
+	printf("           @@   @@####@@,        8 8888    ,o88P'    .888888888. `88888.         8 8888      `8b.  ;8.`8888\n");
+	printf("          -@;   *@@@@@#:         8 888888888P'      .8'       `8. `88888.        8 8888       `Y8888P ,88P'\n");
+}
+
+int keycontrol()
+{
+	char temp = getch();
+	if (temp == '↑')
+	{
+		return UP;
+	}
+	else if (temp == '←')
+	{
+		return LEFT;
+	}
+	else if (temp == '↓')
+	{
+		return DOWN;
+	}
+	else if (temp == '→')
+	{
+		return RIGHT;
+	}
+	else if (temp == '\n')
+	{
+		return SELECT;
+	}
+}
+
+void infodraw()
+{
+	system("cls");
+	printf("■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■\n");
+	printf("■                                                                                                                    ■\n");
+	printf("■                                           <   게  임  설  명  >                                                    ■\n");
+	printf("■                                                                                                                    ■\n");
+	printf("■                                                                                                                    ■\n");
+	printf("■                                                                                                                    ■\n");
+	printf("■                                                                                                                    ■\n");
+	printf("■                                                                                                                    ■\n");
+	printf("■            1.   방향키를 이용하여 조작합니다. (  ↑ ,  ←  , ↓ , → , ENTER  )                                    ■\n");
+	printf("■                                                                                                                    ■\n");
+	printf("■            2.   택스트 선택 방식으로 진행되는 게임이며, 주어진 구조시간인 15일 동안 무사히 생존 하는것이           ■\n");
+	printf("■                 목표입니다.                                                                                        ■\n");
+	printf("■                                                                                                                    ■\n");
+	printf("■            3.  생존자들은 총 3명이며 각각의 생존자들 마다 3의 HP를 가지고 있습니다.  식량 혹은 물을 섭취하지       ■\n");
+	printf("■                하였을떄 HP가 감소하며 초반에 주어지는 구급상자를 통해 HP를 회복시킬 수 있습니다.                   ■\n");
+	printf("■                (★모든 자원은 소모품입니다.)                                                                       ■\n");
+	printf("■                                                                                                                    ■\n");
+	printf("■            4.  탐색을 통해 자원을 획득하거나 잃을 수 있으며, 돌발 상황이 발생할수도 있습니다.                      ■\n");
+	printf("■                                                                                                                    ■\n");
+	printf("■            5.  그 날의 할 모든 일을 끝내면 반드시 다음날로 버튼을 선택해 주세요.                                   ■\n");
+	printf("■                                                                                                                    ■\n");
+	printf("■                                                                                                                    ■\n");
+	printf("■                                                                                                                    ■\n");
+	printf("■                                                                                                                    ■\n");
+	printf("■                                                                                                                    ■\n");
+	printf("■                                                                                                                    ■\n");
+	printf("■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■\n");
+
+
+	printf("\n\n\n");
+	printf("뒤로 가려면 ENTER키를 눌러주시요.....\n");
+	
+	while (1)
+	{
+		
+		if (keycontrol() == SELECT)
+		{
+			break;
+		}
+		else if (keycontrol() == SPACEBAR)
+		{
+			printf("\n\n");
+			printf("팔라딘 오란에게 전해 head is dead end,now each numbers deny infomations now g ");
+		}
+	}
+}
+
+void multi()
+{
+	printf("___   ___\n");
+	printf("\\  \\ /  / \n");
+	printf(" \\  V  /\n");
+	printf("  >   < \n");
+	printf(" /  .  \ \\n");
+	printf("/__/ \\__\\ \n");
+}
+
+void mapdraw()
+{
+	printf("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n");
+}
+
+void selectdraw()
+{
+	int x = 0;
+	int y = 23;
+	gotoxy(x, y);
+	printf("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n");
+	gotoxy(x, y+1);
+	printf("┃                                                                                                                     ┃\n");
+	gotoxy(x, y+2);
+	printf("┃                                                                                                                     ┃\n");
+	gotoxy(x, y+3);
+	printf("┃                                                                                                                     ┃\n");
+	gotoxy(x, y+4);
+	printf("┃                                                                                                                     ┃\n");
+	gotoxy(x, y+5);
+	printf("┃                                                                                                                     ┃\n");
+	gotoxy(x, y+6);
+	printf("┃                                                                                                                     ┃\n");
+	gotoxy(x, y+7);
+	printf("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n");
+	
+}
+
+//여자
+void character_a()
+{
+	int x = 25;
+	int y = 2;
+	gotoxy(x, y);
+	printf("   -(|)-   \n");
+	gotoxy(x, y+1);
+	printf("  /\\|||/\\\n");
+	gotoxy(x, y+2);
+	printf("  |-O_O-|\n");
+	gotoxy(x, y+3);
+	printf("  d  ^  b\n");
+	gotoxy(x, y+4);
+	printf("  O\\-=-/O\n");
+	gotoxy(x, y+5);
+	printf("    \\_/  \n");
+	gotoxy(x, y+6);
+	printf("  __| |__  \n");
+	gotoxy(x, y+7);
+	printf("/  o   o  | \n");
+	gotoxy(x, y+8);
+	printf("|/ __o__ \\|\n");
+	gotoxy(x, y+9);
+	printf("|\\ o   o /|\n");
+	gotoxy(x, y+10);
+	printf("||)=====( \\ \n");
+	gotoxy(x, y+11);
+	printf("|| o   o \\ \n");
+	gotoxy(x, y+12);
+	printf("((   o   | \n");
+	gotoxy(x, y+13);
+	printf(" | o   o |\n");
+	gotoxy(x, y+14);
+	printf(" |   o   | \n");
+	gotoxy(x, y+15);
+	printf(" | o   o | \n");
+	gotoxy(x, y+16);
+	printf(" |_______| \n");
+	gotoxy(x, y+17);
+	printf("   |_|_|  \n");
+	gotoxy(x, y+18);
+	printf("   /X|X\\\n");
+	gotoxy(x, y+19);
+	printf("  (__|__)\n");
+
+}
+
+//남자
+void character_b()
+{
+	int x = 50;
+	int y = 1;
+	gotoxy(x, y);
+	printf("    /\\\\ \\");
+	gotoxy(x, y + 1);
+	printf("   /     \\");
+	gotoxy(x, y + 2);
+	printf("   |-o-o-|");
+	gotoxy(x, y + 3);
+	printf("   C  V  D ");
+	gotoxy(x, y + 4);
+	printf("   | ___ |");
+	gotoxy(x, y + 5);
+	printf("    \\___/");
+	gotoxy(x, y + 6);
+	printf("  _/<|_|>\\_");
+	gotoxy(x, y + 7);
+	printf(" / |/\\_/\\| \\");
+	gotoxy(x, y + 8);
+	printf("| |   |\\|   |");
+	gotoxy(x, y + 9);
+	printf("| |  |\\|  | |");
+	gotoxy(x, y + 10);
+	printf("| |  |\\|  | |");
+	gotoxy(x, y + 11);
+	printf(" \\ \\ |\\|  | |");
+	gotoxy(x, y + 12);
+	printf(" (())\\_/__| |");
+	gotoxy(x, y + 13);
+	printf("  |   |   |_|");
+	gotoxy(x, y + 14);
+	printf("  |   Y   |))\\");
+	gotoxy(x, y + 15);
+	printf("  |   |   | ||");
+	gotoxy(x, y + 16);
+	printf("  |   |   | ||");
+	gotoxy(x, y + 17);
+	printf("  |   |   | ||");
+	gotoxy(x, y + 18);
+	printf("  |___|___| ||");
+	gotoxy(x, y + 19);
+	printf("  /qp| |qp\\ ||");
+	gotoxy(x, y + 20);
+	printf(" (___/ \\___)||");
+}
+
+//아이
+void character_c()
+{
+	int x = 75;
+	int y = 3;
+	gotoxy(x, y);
+	printf("      ////^\\\\\\\\");
+	gotoxy(x, y + 1);
+	printf("      | ^   ^ |");
+	gotoxy(x, y + 2);
+	printf("     @ (o) (o) @");
+	gotoxy(x, y + 3);
+	printf("      |   <   |");
+	gotoxy(x, y + 4);
+	printf("      |  ___  |");
+	gotoxy(x, y + 5);
+	printf("       \\_____/");
+	gotoxy(x, y + 6);
+	printf("     ____|  |____");
+	gotoxy(x, y + 7);
+	printf("    /    \\__/    \\");
+	gotoxy(x, y + 8);
+	printf("   /              \\");
+	gotoxy(x, y + 9);
+	printf("  /\\_/|        |\\_/\\");
+	gotoxy(x, y + 10);
+	printf(" / /  |        |  \\ \\");
+	gotoxy(x, y + 11);
+	printf(" \\ \\  |________|  / /");
+	gotoxy(x, y + 12);
+	printf(" (()) |        | (())");
+	gotoxy(x, y + 13);
+	printf("      |   ||   |");
+	gotoxy(x, y + 14);
+	printf("      |___||___|");
+	gotoxy(x, y + 15);
+	printf("       (  | (  |");
+	gotoxy(x, y + 16);
+	printf("       |  | |  |");
+	gotoxy(x, y + 17);
+	printf("       |  | |  |");
+	gotoxy(x, y + 18);
+	printf("  cccC__ Cccc___)");
+} 
+
+int select_chose()
+{
+	int x = 20;
+	int y = 25;
+	gotoxy(x, y);
+	printf("> 정찰");
+	gotoxy(x + 30, y);
+	printf("  캐릭터 관리");
+	gotoxy(x + 60, y);
+	printf("  다음날");
+
+	while (1)
+	{
+		int n = keycontrol();
+		switch (n)
+		{
+		case LEFT:
+		{
+			if (x > 20)
+			{
+				gotoxy(x, y);
+				printf("  ");
+				for (int i = 0; i < 30; i++)
+				{
+					x--;
+				}
+				gotoxy(x, y);
+				printf(">");
+
+			}
+			break;
+		}
+		
+		case RIGHT:
+		{
+			if (x < 80)
+			{
+				gotoxy(x, y);
+				printf("  ");
+				for (int i = 0; i < 30; i++)
+				{
+					x++;
+				}
+				gotoxy(x, y);
+				printf(">");
+
+			}
+			break;
+		}
+		case SELECT:
+		{
+			return x - 20;
+		}
+
+		}
+
+	}
+
+}
+
+int explore_explain()
+{
+	int x = 1;
+	int y = 24;
+	gotoxy(x, y);
+	printf("누구를 탐험에 보내겠습니까? ");
+}
+
+int explore_select()
+{
+		int x = 20;
+		int y = 25;
+		gotoxy(x, y);
+		printf("> A");
+		gotoxy(x + 20, y);
+		printf("  B");
+		gotoxy(x + 40, y);
+		printf("  C");
+		gotoxy(x + 60, y);
+		printf("  돌아가기");
+
+
+
+		while (1)
+		{
+			int n = keycontrol();
+			switch (n)
+			{
+			case LEFT:
+			{
+				if (x > 20)
+				{
+					gotoxy(x, y);
+					printf("  ");
+					for (int i = 0; i < 20; i++)
+					{
+						x--;
+					}
+					gotoxy(x, y);
+					printf(">");
+
+				}
+				break;
+			}
+
+			case RIGHT:
+			{
+				if (x < 80)
+				{
+					gotoxy(x, y);
+					printf("  ");
+					for (int i = 0; i < 20; i++)
+					{
+						x++;
+					}
+					gotoxy(x, y);
+					printf(">");
+
+				}
+				break;
+			}
+			case SELECT:
+			{
+				return x - 20;
+			}
+
+			}
+
+		}
+
+}
+
+int explore_object_select()
+{
+
+	{
+		int x = 20;
+		int y = 25;
+		gotoxy(x, y);
+		printf("> 총을 가져간다");
+		gotoxy(x + 30, y);
+		printf("  그냥 간다");
+		gotoxy(x + 60, y);
+		printf("  돌아가기");
+
+
+
+		while (1)
+		{
+			int n = keycontrol();
+			switch (n)
+			{
+			case LEFT:
+			{
+				if (x > 20)
+				{
+					gotoxy(x, y);
+					printf("  ");
+					for (int i = 0; i < 30; i++)
+					{
+						x--;
+					}
+					gotoxy(x, y);
+					printf(">");
+
+				}
+				break;
+			}
+
+			case RIGHT:
+			{
+				if (x < 80)
+				{
+					gotoxy(x, y);
+					printf("  ");
+					for (int i = 0; i < 30; i++)
+					{
+						x++;
+					}
+					gotoxy(x, y);
+					printf(">");
+
+				}
+				break;
+			}
+			case SELECT:
+			{
+				return x - 20;
+			}
+
+			}
+
+		}
+
+	}
+}
+
+int object_select()
+
+{
+	int x = 20;
+	int y = 25;
+	gotoxy(x, y);
+	printf("> 식량");
+	gotoxy(x + 20, y);
+	printf("  물");
+	gotoxy(x + 40, y);
+	printf("  상태창");
+	gotoxy(x + 60, y);
+	printf("  돌아가기");
+
+
+
+	while (1)
+	{
+		int n = keycontrol();
+		switch (n)
+		{
+		case LEFT:
+		{
+			if (x > 20)
+			{
+				gotoxy(x, y);
+				printf("  ");
+				for (int i = 0; i < 20; i++)
+				{
+					x--;
+				}
+				gotoxy(x, y);
+				printf(">");
+
+			}
+			break;
+		}
+
+		case RIGHT:
+		{
+			if (x < 80)
+			{
+				gotoxy(x, y);
+				printf("  ");
+				for (int i = 0; i < 20; i++)
+				{
+					x++;
+				}
+				gotoxy(x, y);
+				printf(">");
+
+			}
+			break;
+		}
+		case SELECT:
+		{
+			return x - 20;
+		}
+
+		}
+
+	}
+
+}
+
+int object_draw()
+{
+	int x = 1;
+	int y = 1;
+	gotoxy(x, y);
+	
+}
+
+// 랜덤 인카운터
+int frist_day()
+{
+
+}
+
+
+
+
+//utile
+void init()
+{
+	system("mode con cols=120 lines=35 | title 게임 제목");
+
+	HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_CURSOR_INFO ConsoleCursor;
+	ConsoleCursor.bVisible = 0;
+	ConsoleCursor.dwSize = 1;
+	SetConsoleCursorInfo(consoleHandle, &ConsoleCursor);
+
+}
+
+void gotoxy(int x, int y)
+{
+	HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+	COORD pos;
+	pos.X = x;
+	pos.Y = y;
+	SetConsoleCursorPosition(consoleHandle, pos);
+}
+
+void setColor(int forground, int background)
+{
+	HANDLE consolHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+	int code = forground + background * 16;
+	SetConsoleTextAttribute(consolHandle, code);
+}
