@@ -1,0 +1,19 @@
+#include<stdio.h> 
+#include<stdlib.h> 
+#include<time.h> 
+
+#define MAX 1 
+
+int main(void)
+{
+	int index = 0;
+
+	srand(time(NULL));
+	printf("rand()함수를 이용하여 랜덤함수 값 출력, 최대 10 \n");
+
+	for (index = 0; index < MAX; index++)
+		printf(" 물품의 개수는 %d  ", rand()%11);
+	printf("\n");
+
+	return 0;
+}
