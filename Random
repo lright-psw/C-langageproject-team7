@@ -1,0 +1,18 @@
+#include<stdio.h> 
+#include<stdlib.h> 
+#include<time.h> 
+
+#define MAX 1 
+
+int main(void)
+{
+	int index = 0;
+
+	srand(time(NULL));
+	printf("물픔의 랜덤함수 값 출력, 최대 10 \n");
+
+	for (index = 0; index < MAX; index++)
+		printf("물품의 개수는 %d  ", rand() % 11);
+	
+	return 0;
+}
