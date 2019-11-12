@@ -1,0 +1,49 @@
+//첫쨰날
+int fristday_random()
+{
+	srand((unsigned)time(NULL));
+
+	random_food = (rand() % 100) + 1;
+	random_water = (rand() % 100) + 1;
+	random_healpack = (rand() % 100) + 1;
+	random_gun = (rand() % 100) + 1;
+
+	if (explore_gowithgun == 1) //총O
+	{
+		if (random_food > 70)
+		{
+			obj.food += 1;
+		}
+		if (random_water > 60 && random_water < 80)
+		{
+			obj.water += 1;
+		}
+		if (random_healpack >= 1)
+		{
+			obj.healpack += 1;
+		}
+		if (random_gun >= 30 && random_gun <= 80)
+		{
+			obj.gun += random_objnumber;
+		}
+	}
+	else if(explore_gowithgun == 0) //총X
+	{
+		if (random_food > 90)
+		{
+			obj.food += 1;
+		}
+		if (random_water > 70 && random_water < 80)
+		{
+			obj.water += 1;
+		}
+		if (random_healpack >= 30)
+		{
+			obj.healpack += 1;
+		}
+		if (random_gun >= 30 && random_gun <= 40)
+		{
+			obj.gun += random_objnumber;
+		}
+	}
+}
