@@ -1,0 +1,54 @@
+//이벤트2
+
+int x = ;
+int y = ;
+gotoxy(x, y);
+printf("건장해 보이는 남성이 찾아왔다. 자신이 군인이라며 무기를 빌려달라고 한다.");
+gotoxy(x, y + 1);
+printf("무기를 빌려주면 크게 보답을 해주겠다고 한다.");
+gotoxy(x, y + 2);
+printf("총을 가지고 있긴 하지만... 빌려주어야 할까?");
+
+//이벤트3
+
+int x = ;
+int y = ;
+gotoxy(x, y);
+printf("바깥에서 소란스러운 소리가 들린다.");
+gotoxy(x, y + 1);
+printf("사이렌 소리와 헬기 소리인거 같은데...");
+gotoxy(x, y + 2);
+printf("바깥에 나가서 상황을 살펴볼까??");
+
+//일반 이벤트
+
+int x = ;
+int y = ;
+gotoxy(x, y);
+printf("운이 좋았다!! 저 멀리에 마트가 보였다.");
+gotoxy(x, y + 1);
+printf("많은 식량을 챙기진 못했지만");
+gotoxy(x, y + 2);
+printf("부상 없이 벙커로 복귀할 수 있었다!");
+
+//일반 이벤트
+
+int x = ;
+int y = ;
+gotoxy(x, y);
+printf("아직도 바깥의 상황은 열악했다..");
+gotoxy(x, y + 1);
+printf("부식 된 건물이 무너지면서 파편이");
+gotoxy(x, y + 2);
+printf("발을 찍어 상처를 입게 되었다.");
+
+//일반 이벤트
+
+int x = ;
+int y = ;
+gotoxy(x, y);
+printf("바깥은 군인들이 물자를 보급중이었다.");
+gotoxy(x, y + 1);
+printf("군인들은 우리에게 총기 뿐만 아니라");
+gotoxy(x, y + 2);
+printf("구급상자도 주었다!!");
