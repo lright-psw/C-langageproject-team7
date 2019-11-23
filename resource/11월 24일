@@ -1,0 +1,4011 @@
+#include <stdio.h>
+#include <Windows.h>
+#include <time.h>
+#include <conio.h>
+#include <stdlib.h>
+#include <string.h>
+
+//색갈
+#ifndef __COLOR_LIST_
+#define __COLOR_LIST_
+
+enum {
+	black,
+	blue,
+	green,
+	cyan,
+	red,
+	purple,
+	brown,
+	lightgray,
+	darkgray,
+	lightblue,
+	lightgreen,
+	lightcyan,
+	lightred,
+	lightpurple,
+	yellow,
+	white,
+};
+
+#endif
+
+//구조체
+struct object {
+	int food;
+	int water;
+	int healpack;
+	int gun;
+}obj;
+
+struct character_hp {
+	int a_hp;
+	int b_hp;
+	int c_hp;
+
+}hp;
+
+//함수
+void init();
+void gotoxy(int, int);
+void setColor(int, int);
+void titledraw();
+int menudraw();
+int fristday_random();
+int secondday_random();
+int thirdday_random();
+int fourthday_random();
+int fifthday_random();
+int sixthday_random();
+int seventhday_random();
+int eighthday_random();
+int ninthday_random();
+int tenthday_random();
+int eleventhday_random();
+int twelfthday_random();
+int thirteenthday_random();
+int fourteenthday_random();
+void mapdraw();
+void selectdraw();
+int select_chose();
+int object_draw();
+int object_select();
+int human_select();
+int explore_explain();
+void infodraw();
+void character_a();
+void character_b();
+void character_c();
+int explore_object_select();
+int obj_amount(struct object const *food, struct object const *water, struct object const *healpack, struct object const *gun, int date);
+int daydraw(int date);
+int eat_food(struct object const *food);
+int eat_water(struct object const *water);
+void statedraw();
+int noeat_down(struct character_hp const *all_hp);
+int you_died(struct character_hp const *all_hp);
+void skull(int x, int y);
+void youdied_draw(int x, int y);
+int healdraw();
+int heal_hp(struct character_hp const *all_hp); 
+int save(struct character_hp const *all_hp, struct object const *all_obj, int day);
+int load(struct character_hp const *all_hp, struct object const *all_obj, int day);
+void firstday_epilog();
+void secondday_epilog();
+void thirdday_epilog();
+void fourthday_epilog();
+void fifthday_epilog();
+void sixthday_epilog();
+void seventhday_epilog();
+void eighthday_epilog();
+void ninthday_epilog();
+void tenthday_epilog();
+void eleventhday_epilog();
+void twelfthday_epilog();
+void thirteenthday_epilog();
+void fourteenthday_epilog();
+void nomalend_epilog();
+void hiddenend_epilog();
+int special_event();
+void special_result(struct character_hp *all_hp, struct object *all_obj);
+void nomal_event();
+void nomal_result(struct character_hp *all_hp, struct object *all_obj);
+\
+
+
+//메크로
+//키보드 값
+#define UP 72
+#define DOWN 80
+#define LEFT 75
+#define RIGHT 77
+#define SELECT 13
+#define SPACEBAR 32
+#define HP 3
+
+
+int object_num;
+int explore_num;
+int explore_object;
+int explore_q; //정찰 유무
+int days = 0;
+int days_error = 1;
+int explore_now = 1;
+int explore_gowithgun = 0;
+int who_explore;
+extern int random_food = 0;
+extern int random_water = 0;
+extern int random_healpack = 0;
+extern int random_gun = 0;
+int random_objnumber_high = 0;
+int random_objnumber_middle = 0;
+int random_objnumber_low = 0;
+int food_select; //식량 선택함수
+int water_select;//물 선택함수
+int a_foodeat = 0;
+int a_watereat = 0;
+int b_foodeat = 0;
+int b_watereat = 0;
+int c_foodeat = 0;
+int c_watereat = 0;
+int youdied = 1;
+int heal_go;
+int heal_select;
+int heal_who;
+int dayback_error = 0;
+int special_select;
+int special_num;
+int nomal_select;
+int nomal_num;
+int hidden;
+int luckygun;
+
+int main()
+{
+	obj.food = 6;
+	obj.water = 6;
+	obj.healpack = 1;
+	obj.gun = 1;
+	hp.a_hp = HP;
+	hp.b_hp = HP;
+	hp.c_hp = HP;
+	luckygun = 0;
+	init();
+	while (1)
+	{
+		titledraw();
+		int menucode = menudraw();
+		if (menucode == 0) //게임시작
+		{
+			obj.food = 6;
+			obj.water = 6;
+			obj.healpack = 1;
+			obj.gun = 1;
+			a_foodeat = 0;
+			a_watereat = 0;
+			b_foodeat = 0;
+			b_watereat = 0;
+			c_foodeat = 0;
+			c_watereat = 0;
+			days = 0;
+			youdied = 1;
+			hp.a_hp = HP;
+			hp.b_hp = HP;
+			hp.c_hp = HP;
+		rabel:
+			luckygun = 0;
+			while (1)
+			{
+				srand((unsigned)time(NULL));
+				random_objnumber_high = ((rand() % 4) + 2);
+				random_objnumber_middle = ((rand() % 3) + 1);
+				random_objnumber_low = ((rand() % 2)+1);
+				system("cls");
+				if (dayback_error == 0)
+				{
+					if (days == 0)
+					{
+						system("cls");
+						firstday_epilog();
+						Sleep(2500);
+					}
+					else
+						daydraw(days);
+				}
+				system("cls");
+				mapdraw();
+				if (hp.a_hp > 0)
+				{
+					character_a();
+				}
+				if (hp.b_hp > 0)
+				{
+					character_b();
+				}
+				if (hp.c_hp > 0)
+				{
+					character_c();
+				}
+				if (days == 0)
+				{
+					gotoxy(110, 1);
+					printf("1번째날");
+				}
+				obj_amount(obj.food, obj.water, obj.healpack, obj.gun, days);
+				selectdraw();
+				int select = select_chose();
+				if (explore_now != 0)
+				{
+					explore_now = 1;
+				}
+				if (select == 0) //정찰
+				{
+					
+					if (explore_now == 0) //정찰 막기!!
+					{
+						selectdraw();
+						gotoxy(1, 24);
+						printf("이미 정찰을 보냈습니다.");
+						gotoxy(1, 26);
+						printf("ENTER키를 눌러주세요......");
+						while (1)
+						{
+							if (keycontrol() == SELECT)
+							{
+								break;
+							}
+						}
+					}
+					while (explore_now == 1)
+					{
+						selectdraw();
+						explore_explain();
+						explore_num = human_select();
+						if (explore_num == 0) //여자
+						{
+							selectdraw();
+							explore_object = explore_object_select();
+							if (explore_object == 0) //총 들고 정찰
+							{
+								explore_q = 1;
+								explore_gowithgun = 1;
+								if (obj.gun < 1)
+								{
+									selectdraw();
+									int x = 1;
+									int y = 24;
+									gotoxy(x, y);
+									printf("총이 없습니다. ");
+									gotoxy(x, y + 3);
+									printf("ENTER키를 눌러주세요......");
+									explore_q = 0;
+									explore_gowithgun = 0;
+									while (1)
+									{
+										if (keycontrol() == SELECT)
+										{
+											break;
+										}
+									}
+								}
+
+								if (obj.gun <= 0)
+								{
+									obj.gun = 0;
+									dayback_error = 1;
+									who_explore = 1;
+								}
+								else
+								{
+									luckygun = 1;
+									obj.gun -= 1;
+									explore_now = 0;
+									dayback_error = 1;
+									who_explore = 1;
+								}
+								days_error = 0;
+							}
+							else if (explore_object == 30) //총 없이 정찰
+							{
+								explore_q = 1;
+								explore_now = 0;
+								days_error = 0;
+								dayback_error = 1;
+								who_explore = 1;
+							}
+							else if (explore_object = 60) //뒤로가기
+							{
+								days_error = 0;
+								dayback_error = 1;
+							}
+						}
+						else if (explore_num == 20) //남자
+						{
+							selectdraw();
+							explore_object = explore_object_select();
+							if (explore_object == 0) //총 들고 정찰
+							{
+								explore_q = 1;
+								explore_gowithgun = 1;
+								if (obj.gun < 1)
+								{
+									selectdraw();
+									int x = 1;
+									int y = 24;
+									gotoxy(x, y);
+									printf("총이 없습니다. ");
+									gotoxy(x, y + 3);
+									printf("ENTER키를 눌러주세요......");
+									explore_q = 0;
+									explore_gowithgun = 0;
+									while (1)
+									{
+										if (keycontrol() == SELECT)
+										{
+											break;
+										}
+									}
+								}
+								if (obj.gun <= 0)
+								{
+									obj.gun = 0;
+									dayback_error = 1;
+									who_explore = 2;
+								}
+								else
+								{
+									luckygun = 1;
+									obj.gun -= 1;
+									explore_now = 0;
+									dayback_error = 1;
+									who_explore = 2;
+								}
+								days_error = 0;
+							}
+							else if (explore_object == 30) //총 없이 정찰
+							{
+								explore_q = 1;
+								explore_now = 0;
+								days_error = 0;
+								dayback_error = 1;
+								who_explore = 2;
+							}
+							else if (explore_object = 60) //뒤로가기
+							{
+								days_error = 0;
+								dayback_error = 1;
+							}
+						}
+						else if (explore_num == 40) //아이
+						{
+							selectdraw();
+							explore_object = explore_object_select();
+							if (explore_object == 0) //총 들고 정찰
+							{
+								explore_q = 1;
+								explore_gowithgun = 1;
+								if (obj.gun < 1)
+								{
+									selectdraw();
+									int x = 1;
+									int y = 24;
+									gotoxy(x, y);
+									printf("총이 없습니다. ");
+									gotoxy(x, y + 3);
+									printf("ENTER키를 눌러주세요......");
+									explore_q = 0;
+									explore_gowithgun = 0;
+									while (1)
+									{
+										if (keycontrol() == SELECT)
+										{
+											break;
+										}
+									}
+								}
+								if (obj.gun <= 0)
+								{
+									obj.gun = 0;
+									dayback_error = 1;
+									who_explore = 3;
+								}
+								else
+								{
+									luckygun = 1;
+									obj.gun -= 1;
+									explore_now = 0;
+									dayback_error = 1;
+									who_explore = 3;
+								}
+								days_error = 0;
+							}
+							else if (explore_object == 30) //총 없이 정찰
+							{
+								explore_q = 1;
+								explore_now = 0;
+								days_error = 0;
+								dayback_error = 1;
+								who_explore = 3;
+							}
+							else if (explore_object = 60) //뒤로가기
+							{
+								days_error = 0;
+								dayback_error = 1;
+							}
+						}
+						else if (explore_num == 60) //돌아가기
+						{
+						explore_now = 2;
+						dayback_error = 1;
+ }
+					}
+				}
+				else if (select == 20) //캐릭터관리
+				{
+					selectdraw();
+					object_num = object_select();
+					if (object_num == 0) //식량
+					{
+						selectdraw();
+						food_select = human_select();
+						if (food_select == 0)
+						{
+							eat_food(obj.food);
+							a_foodeat -= 1;
+							dayback_error = 1;
+
+						}
+						else if (food_select == 20)
+						{
+							eat_food(obj.food);
+							b_foodeat -= 1;
+							dayback_error = 1;
+
+						}
+						else if (food_select == 40)
+						{
+							eat_food(obj.food);
+							c_foodeat -= 1;
+							dayback_error = 1;
+						}
+						else if (food_select == 60)
+						{
+							dayback_error = 1;
+						}
+					}
+					else if (object_num == 20) //물
+					{
+						selectdraw();
+						water_select = human_select();
+						if (water_select == 0)
+						{
+							eat_water(obj.food);
+							a_watereat -= 1;
+							dayback_error = 1;
+						}
+						else if (water_select == 20)
+						{
+							eat_water(obj.food);
+							b_watereat -= 1;
+							dayback_error = 1;
+						}
+						else if (water_select == 40)
+						{
+							eat_water(obj.food);
+							c_watereat -= 1;
+							dayback_error = 1;
+						}
+						else if (water_select == 60)
+						{
+							dayback_error = 1;
+						}
+					}
+					else if (object_num == 40) //상태창
+					{
+						selectdraw();
+						statedraw();
+						heal_go = healdraw();
+						if (heal_go == 0)
+						{
+							selectdraw();
+							heal_select = human_select();
+							if (heal_select == 0)
+							{
+								heal_who = 0;
+								heal_hp(&hp);
+								dayback_error = 1;
+							}
+							else if (heal_select == 20)
+							{
+								heal_who = 1;
+								heal_hp(&hp);
+								dayback_error = 1;
+							}
+							else if (heal_select == 40)
+							{
+								heal_who = 2;
+								heal_hp(&hp);
+								dayback_error = 1;
+							}
+							else if (heal_select == 60)
+							{
+								dayback_error = 1;
+							}
+						}
+						else
+							dayback_error = 1;
+
+					}
+					else if (object_num == 60) //돌아가기
+					{
+						dayback_error = 1;
+					}
+
+				}
+				else if (select == 40) //다음날
+				{
+					days_error = 1;
+					explore_now = 1;
+					days += 1;
+					a_watereat += 1;
+					a_foodeat += 1;
+					b_watereat += 1;
+					b_foodeat += 1;
+					c_watereat += 1;
+					c_foodeat += 1;
+					dayback_error = 0;
+					noeat_down(&hp);
+					you_died(&hp);
+					if (youdied == 0)
+					{
+						break;
+					}
+					if (days == 15 || hidden >= 4)
+					{
+						hiddenend_epilog();
+						gotoxy(19, 29);
+						printf("ENTER키를 눌러주세요......");
+						while (1)
+						{
+							if (keycontrol() == SELECT)
+							{
+								break;
+							}
+						}
+						system("cls");
+						gotoxy(25, 10);
+						printf("<히든엔딩> 사건의 전말");
+						gotoxy(25, 12);
+						printf("ENTER키를 눌러주세요......");
+						while (1)
+						{
+							if (keycontrol() == SELECT)
+							{
+								break;
+							}
+						}
+						break;
+					}
+					else if (days == 15)
+					{
+						nomalend_epilog();
+						gotoxy(19, 29);
+						printf("ENTER키를 눌러주세요......");
+						while (1)
+						{
+							if (keycontrol() == SELECT)
+							{
+								break;
+							}
+						}
+						system("cls");
+						gotoxy(25, 10);
+						printf("<노말엔딩> 힘없는 죽음");
+						gotoxy(25, 12);
+						printf("ENTER키를 눌러주세요......");
+						while (1)
+						{
+							if (keycontrol() == SELECT)
+							{
+								break;
+							}
+						}
+						break;
+					}
+				}
+				else if (select == 60) //세이브
+				{
+				save(&hp, &obj, days);
+				dayback_error = 1;
+ }
+			}
+				
+		}
+		else if (menucode == 1) //이어하기
+		{
+		load(&hp, &obj, days);
+		goto rabel;
+ }
+		else if (menucode == 2) //게임설명
+		{
+			infodraw();
+		}
+		else if (menucode == 3) //종료
+		{
+			return 0;
+		}
+		system("cls");
+	}
+	return 0;
+}
+
+
+// ※game※
+
+int keycontrol()
+{
+	char temp = getch();
+	if (temp == '↑')
+	{
+		return UP;
+	}
+	else if (temp == '←')
+	{
+		return LEFT;
+	}
+	else if (temp == '↓')
+	{
+		return DOWN;
+	}
+	else if (temp == '→')
+	{
+		return RIGHT;
+	}
+	else if (temp == '\n')
+	{
+		return SELECT;
+	}
+}
+
+//출력 함수
+//처음 메뉴출력
+int menudraw()
+{
+	int x = 55;
+	int y = 25;
+	gotoxy(x - 2, y);
+	printf("> 게임시작");
+	gotoxy(x, y + 1);
+	printf("이어하기");
+	gotoxy(x , y + 2);
+	printf("게임설명");
+	gotoxy(x + 2, y + 3);
+	printf("죵료");
+	while (1)
+	{
+		int n = keycontrol();
+		switch (n)
+		{
+		case UP:
+		{
+			if (y > 25)
+			{
+				gotoxy(x - 2, y);
+				printf(" ");
+				gotoxy(x - 2, --y);
+				printf(">");
+			}
+			break;
+		}
+		case DOWN:
+		{
+			if (y < 28)
+			{
+				gotoxy(x - 2, y);
+				printf(" ");
+				gotoxy(x - 2, ++y);
+				printf(">");
+			}
+			break;
+		}
+		case SELECT:
+		{
+			return y - 25;
+		}
+		}
+	}
+
+}
+//타이틀 출력
+void titledraw()
+{
+	printf("\n");
+	printf("\n");
+	printf("                 $@.  ;@@@@@@@   \n");
+	printf("                ,@*   *@~-----   \n");
+	printf("                !@;   @$         \n");
+	printf("               ,@@   :@,         \n");
+	printf("               =@*   @#          \n");
+	printf("              .@@,  ~@:          \n");
+	printf("               $#.  ;@-          \n");
+	printf("              .@=   @@$$$$=,     \n");
+	printf("              !@,  -@@@@@@@!     \n");
+	printf("              @@         !@,     \n");
+	printf("             ~@:         @@      8 888888888o.               .8.          `8.`8888.      ,8'    d888888o.  \n");
+	printf("             ;@~        :@-      8 8888    `^888.           .888.          `8.`8888.    ,8'   .`8888:' `88.\n");
+	printf("             ##         =@.      8 8888        `88.        :88888.          `8.`8888.  ,8'    8.`8888.   Y8\n");
+	printf("             @$   ##   .#=       8 8888         `88       . `88888.          `8.`8888.,8'     `8.`8888.\n");
+	printf("            $@   !@,   ,@!       8 8888          88      .8. `88888.          `8.`88888'       `8.`8888.\n");
+	printf("            @#   $@.   #@        8 8888          88     .8`8. `88888.          `8. 8888         `8.`8888.\n");
+	printf("           ~@;  ,@*    @$        8 8888         ,88    .8' `8. `88888.          `8 8888          `8.`8888. \n");
+	printf("           ;@-  ~@;   ;@-        8 8888    ,o88P'    .888888888. `88888.         8 8888      `8b.  ;8.`8888\n");
+	printf("           @@   @@####@@,        8 8888    ,o88P'    .888888888. `88888.         8 8888      `8b.  ;8.`8888\n");
+	printf("          -@;   *@@@@@#:         8 888888888P'      .8'       `8. `88888.        8 8888       `Y8888P ,88P'\n");
+}
+//게임설명 출력
+void infodraw()
+{
+	system("cls");
+	printf("■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■\n");
+	printf("■                                                                                                                    ■\n");
+	printf("■                                           <   게  임  설  명  >                                                    ■\n");
+	printf("■                                                                                                                    ■\n");
+	printf("■                                                                                                                    ■\n");
+	printf("■                                                                                                                    ■\n");
+	printf("■                                                                                                                    ■\n");
+	printf("■                                                                                                                    ■\n");
+	printf("■            1.   방향키를 이용하여 조작합니다. (  ↑ ,  ←  , ↓ , → , ENTER  )                                    ■\n");
+	printf("■                                                                                                                    ■\n");
+	printf("■            2.   택스트 선택 방식으로 진행되는 게임이며, 주어진 구조시간인 15일 동안 무사히 생존 하는것이           ■\n");
+	printf("■                 목표입니다.                                                                                        ■\n");
+	printf("■                                                                                                                    ■\n");
+	printf("■            3.  생존자들은 총 3명이며 각각의 생존자들 마다 3의 HP를 가지고 있습니다.  식량 혹은 물을 섭취하지       ■\n");
+	printf("■                하였을떄 HP가 감소하며 초반에 주어지는 구급상자를 통해 HP를 회복시킬 수 있습니다.                   ■\n");
+	printf("■                (★모든 자원은 소모품입니다.)                                                                       ■\n");
+	printf("■                                                                                                                    ■\n");
+	printf("■            4.  탐색을 통해 자원을 획득하거나 잃을 수 있으며, 돌발 상황이 발생할수도 있습니다.                      ■\n");
+	printf("■                                                                                                                    ■\n");
+	printf("■            5.  그 날의 할 모든 일을 끝내면 반드시 다음날로 버튼을 선택해 주세요.                                   ■\n");
+	printf("■                                                                                                                    ■\n");
+	printf("■                                                                                                                    ■\n");
+	printf("■                                                                                                                    ■\n");
+	printf("■                                                                                                                    ■\n");
+	printf("■                                                                                                                    ■\n");
+	printf("■                                                                                                                    ■\n");
+	printf("■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■\n");
+
+
+	printf("\n\n\n");
+	printf("뒤로 가려면 ENTER키를 눌러주시요.....\n");
+	
+	while (1)
+	{
+		
+		if (keycontrol() == SELECT)
+		{
+			break;
+		}
+		else if (keycontrol() == SPACEBAR)
+		{
+			printf("\n\n");
+			printf("팔라딘 오란에게 전해 head is dead end,now each numbers deny infomations now g ");
+		}
+	}
+}
+//물품 개수 출력
+int obj_amount(struct object const *food,struct object const *water, struct object const *healpack,struct object const *gun,int date)
+{
+	int x = 2;
+	int y = 1;
+	gotoxy(x, y);
+	setColor(yellow, black);
+	if (food <= 0)
+		food = 0;
+	printf("FOOD : %d",food);
+	gotoxy(x, y+1);
+	setColor(lightblue, black);
+	if (water <= 0)
+		water = 0;
+	printf("WATER : %d",water);
+	gotoxy(x, y+2);
+	setColor(purple, black);
+	if (healpack <= 0)
+		healpack = 0;
+	printf("HEALPACK : %d", healpack);
+	gotoxy(x, y + 3);
+	setColor(brown, black);
+	if (gun <= 0)
+		gun = 0;
+	printf("GUN : %d", gun);
+
+	setColor(white, black);
+	int X = 110;
+	int Y = 1;
+	if (date == 1)
+	{
+		gotoxy(X, Y);
+		printf("2번째날");
+	}
+	else if (date == 2)
+	{
+		gotoxy(X, Y);
+		printf("3번째날");
+	}
+	else if (date == 3)
+	{
+		gotoxy(X, Y);
+		printf("4번째날");
+	}
+	else if (date == 4)
+	{
+		gotoxy(X, Y);
+		printf("5번째날");
+	}
+	else if (date == 5)
+	{
+		gotoxy(X, Y);
+		printf("6번째날");
+	}
+	else if (date == 6)
+	{
+		gotoxy(X, Y);
+		printf("7번째날");
+	}
+	else if (date == 7)
+	{
+		gotoxy(X, Y);
+		printf("8번째날");
+	}
+	else if (date == 8)
+	{
+		gotoxy(X, Y);
+		printf("9번째날");
+	}
+	else if (date == 9)
+	{
+		gotoxy(X, Y);
+		printf("10번째날");
+	}
+	else if (date == 10)
+	{
+		gotoxy(X, Y);
+		printf("11번째날");
+	}
+	else if (date == 11)
+	{
+		gotoxy(X, Y);
+		printf("12번째날");
+	}
+	else if (date == 12)
+	{
+		gotoxy(X, Y);
+		printf("13번째날");
+	}
+	else if (date == 13)
+	{
+		gotoxy(X, Y);
+		printf("14번째날");
+	}
+	else if (date == 14)
+	{
+		gotoxy(X, Y);
+		printf("15번째날");
+	}
+}
+//맵 출력
+void mapdraw()
+{
+	printf("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n");
+}
+//선택지란 출력
+void selectdraw()
+{
+	int x = 0;
+	int y = 23;
+	gotoxy(x, y);
+	printf("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n");
+	gotoxy(x, y+1);
+	printf("┃                                                                                                                     ┃\n");
+	gotoxy(x, y+2);
+	printf("┃                                                                                                                     ┃\n");
+	gotoxy(x, y+3);
+	printf("┃                                                                                                                     ┃\n");
+	gotoxy(x, y+4);
+	printf("┃                                                                                                                     ┃\n");
+	gotoxy(x, y+5);
+	printf("┃                                                                                                                     ┃\n");
+	gotoxy(x, y+6);
+	printf("┃                                                                                                                     ┃\n");
+	gotoxy(x, y+7);
+	printf("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n");
+	
+}
+//캐릭터상태창 출력
+void statedraw()
+{
+	int x = 2;
+	int y = 24;
+
+	//A의 상태창
+	gotoxy(x, y);
+	printf("어머니의 상태");
+	if (hp.a_hp >= 3)
+	{
+		gotoxy(x, y + 1);
+		setColor(red, black);
+		printf("어머니의 체력  :  ■■■");
+	}
+	else if (hp.a_hp == 2)
+	{
+		gotoxy(x, y + 1);
+		setColor(red, black);
+		printf("어머니의 체력  :  ■■");
+	}
+	else if (hp.a_hp == 1)
+	{
+		gotoxy(x, y + 1);
+		setColor(red, black);
+		printf("어머니의 체력  :  ■");
+	}
+	else if (hp.a_hp <= 0)
+	{
+		gotoxy(x, y + 1);
+		setColor(red, black);
+		printf("어머니의 체력  :  ");
+	}
+
+	if (a_foodeat == 0)
+	{
+		gotoxy(x, y + 2);
+		setColor(yellow, black);
+		printf("어머니의 포만감 : ■■■");
+	}
+	else if (a_foodeat == 1)
+	{
+		gotoxy(x, y + 2);
+		setColor(yellow, black);
+		printf("어머니의 포만감 : ■■");
+	}
+	else if (a_foodeat == 2)
+	{
+		gotoxy(x, y + 2);
+		setColor(yellow, black);
+		printf("어머니의 포만감 : ■");
+	}
+	else if (a_foodeat >= 3)
+	{
+		gotoxy(x, y + 2);
+		setColor(yellow, black);
+		printf("어머니의 포만감 : ");
+	}
+
+	if (a_watereat == 0)
+	{
+		gotoxy(x, y + 3);
+		setColor(lightblue, black);
+		printf("어머니의 목마름 : ■■■");
+	}
+	else if (a_watereat == 1)
+	{
+		gotoxy(x, y + 3);
+		setColor(lightblue, black);
+		printf("어머니의 목마름 : ■■");
+	}
+	else if (a_watereat == 2)
+	{
+		gotoxy(x, y + 3);
+		setColor(lightblue, black);
+		printf("어머니의 목마름 : ■");
+	}
+	else if (a_watereat >= 3)
+	{
+		gotoxy(x, y + 3);
+		setColor(lightblue, black);
+		printf("어머니의 목마름 : ");
+	}
+
+	//B의 상태창
+	gotoxy(x + 27, y);
+	setColor(white, black);
+	printf("아버지의 상태");
+	if (hp.b_hp >= 3)
+	{
+		gotoxy(x + 27, y + 1);
+		setColor(red, black);
+		printf("아버지의 체력  :  ■■■");
+	}
+	else if (hp.b_hp == 2)
+	{
+		gotoxy(x + 27, y + 1);
+		setColor(red, black);
+		printf("아버지의 체력  :  ■■");
+	}
+	else if (hp.b_hp == 1)
+	{
+		gotoxy(x + 27, y + 1);
+		setColor(red, black);
+		printf("아버지의 체력  :  ■");
+	}
+	else if (hp.b_hp <= 0)
+	{
+		gotoxy(x+27, y + 1);
+		setColor(red, black);
+		printf("아버지의 체력  :  ");
+	}
+
+	if (b_foodeat == 0)
+	{
+		gotoxy(x + 27, y + 2);
+		setColor(yellow, black);
+		printf("아버지의 포만감 : ■■■");
+	}
+	else if (b_foodeat == 1)
+	{
+		gotoxy(x + 27, y + 2);
+		setColor(yellow, black);
+		printf("아버지의 포만감 : ■■");
+	}
+	else if (b_foodeat == 2)
+	{
+		gotoxy(x + 27, y + 2);
+		setColor(yellow, black);
+		printf("아버지의 포만감 : ■");
+	}
+	else if (b_foodeat >= 3)
+	{
+		gotoxy(x + 27, y + 2);
+		setColor(yellow, black);
+		printf("아버지의 포만감 : ");
+	}
+
+	if (b_watereat == 0)
+	{
+		gotoxy(x + 27, y + 3);
+		setColor(lightblue, black);
+		printf("아버지의 목마름 : ■■■");
+	}
+	else if (b_watereat == 1)
+	{
+		gotoxy(x + 27, y + 3);
+		setColor(lightblue, black);
+		printf("아버지의 목마름 : ■■");
+	}
+	else if (b_watereat == 2)
+	{
+		gotoxy(x + 27, y + 3);
+		setColor(lightblue, black);
+		printf("아버지의 목마름 : ■");
+	}
+	else if (b_watereat >= 3)
+	{
+		gotoxy(x + 27, y + 3);
+		setColor(lightblue, black);
+		printf("아버지의 목마름 : ");
+	}
+
+
+	//C의 상태창
+	gotoxy(x + 54, y);
+	setColor(white, black);
+	printf("아이의 상태");
+	if (hp.c_hp >= 3)
+	{
+		gotoxy(x + 54, y + 1);
+		setColor(red, black);
+		printf("아이의 체력  :  ■■■");
+	}
+	else if (hp.c_hp == 2)
+	{
+		gotoxy(x + 54, y + 1);
+		setColor(red, black);
+		printf("아이의 체력  :  ■■");
+	}
+	else if (hp.c_hp == 1)
+	{
+		gotoxy(x + 54, y + 1);
+		setColor(red, black);
+		printf("아이의 체력  :  ■");
+	}
+	else if (hp.c_hp <= 0)
+	{
+		gotoxy(x+54, y + 1);
+		setColor(red, black);
+		printf("아이의 체력  :  ");
+	}
+
+	if (c_foodeat == 0)
+	{
+		gotoxy(x + 54, y + 2);
+		setColor(yellow, black);
+		printf("아이의 포만감 : ■■■");
+	}
+	else if (c_foodeat == 1)
+	{
+		gotoxy(x + 54, y + 2);
+		setColor(yellow, black);
+		printf("아이의 포만감 : ■■");
+	}
+	else if (c_foodeat == 2)
+	{
+		gotoxy(x + 54, y + 2);
+		setColor(yellow, black);
+		printf("아이의 포만감 : ■");
+	}
+	else if (c_foodeat >= 3)
+	{
+		gotoxy(x + 54, y + 2);
+		setColor(yellow, black);
+		printf("아이의 포만감 : ");
+	}
+
+	if (c_watereat == 0)
+	{
+		gotoxy(x + 54, y + 3);
+		setColor(lightblue, black);
+		printf("아이의 목마름 : ■■■");
+	}
+	else if (c_watereat == 1)
+	{
+		gotoxy(x + 54, y + 3);
+		setColor(lightblue, black);
+		printf("아이의 목마름 : ■■");
+	}
+	else if (c_watereat == 2)
+	{
+		gotoxy(x + 54, y + 3);
+		setColor(lightblue, black);
+		printf("아이의 목마름 : ■");
+	}
+	else if (c_watereat >= 3)
+	{
+		gotoxy(x + 54, y + 3);
+		setColor(lightblue, black);
+		printf("아이의 목마름 : ");
+	}
+}
+
+//캐릭터 출력
+//여자
+void character_a()
+{
+	int x = 25;
+	int y = 2;
+	gotoxy(x, y);
+	printf("   -(|)-   \n");
+	gotoxy(x, y+1);
+	printf("  /\\|||/\\\n");
+	gotoxy(x, y+2);
+	printf("  |-O_O-|\n");
+	gotoxy(x, y+3);
+	printf("  d  ^  b\n");
+	gotoxy(x, y+4);
+	printf("  O\\-=-/O\n");
+	gotoxy(x, y+5);
+	printf("    \\_/  \n");
+	gotoxy(x, y+6);
+	printf("  __| |__  \n");
+	gotoxy(x, y+7);
+	printf("/  o   o  | \n");
+	gotoxy(x, y+8);
+	printf("|/ __o__ \\|\n");
+	gotoxy(x, y+9);
+	printf("|\\ o   o /|\n");
+	gotoxy(x, y+10);
+	printf("||)=====( \\ \n");
+	gotoxy(x, y+11);
+	printf("|| o   o \\ \n");
+	gotoxy(x, y+12);
+	printf("((   o   | \n");
+	gotoxy(x, y+13);
+	printf(" | o   o |\n");
+	gotoxy(x, y+14);
+	printf(" |   o   | \n");
+	gotoxy(x, y+15);
+	printf(" | o   o | \n");
+	gotoxy(x, y+16);
+	printf(" |_______| \n");
+	gotoxy(x, y+17);
+	printf("   |_|_|  \n");
+	gotoxy(x, y+18);
+	printf("   /X|X\\\n");
+	gotoxy(x, y+19);
+	printf("  (__|__)\n");
+
+}
+//남자
+void character_b()
+{
+	int x = 50;
+	int y = 1;
+	gotoxy(x, y);
+	printf("    /\\\\ \\");
+	gotoxy(x, y + 1);
+	printf("   /     \\");
+	gotoxy(x, y + 2);
+	printf("   |-o-o-|");
+	gotoxy(x, y + 3);
+	printf("   C  V  D ");
+	gotoxy(x, y + 4);
+	printf("   | ___ |");
+	gotoxy(x, y + 5);
+	printf("    \\___/");
+	gotoxy(x, y + 6);
+	printf("  _/<|_|>\\_");
+	gotoxy(x, y + 7);
+	printf(" / |/\\_/\\| \\");
+	gotoxy(x, y + 8);
+	printf("| |   |\\|   |");
+	gotoxy(x, y + 9);
+	printf("| |  |\\|  | |");
+	gotoxy(x, y + 10);
+	printf("| |  |\\|  | |");
+	gotoxy(x, y + 11);
+	printf(" \\ \\ |\\|  | |");
+	gotoxy(x, y + 12);
+	printf(" (())\\_/__| |");
+	gotoxy(x, y + 13);
+	printf("  |   |   |_|");
+	gotoxy(x, y + 14);
+	printf("  |   Y   |))\\");
+	gotoxy(x, y + 15);
+	printf("  |   |   | ||");
+	gotoxy(x, y + 16);
+	printf("  |   |   | ||");
+	gotoxy(x, y + 17);
+	printf("  |   |   | ||");
+	gotoxy(x, y + 18);
+	printf("  |___|___| ||");
+	gotoxy(x, y + 19);
+	printf("  /qp| |qp\\ ||");
+	gotoxy(x, y + 20);
+	printf(" (___/ \\___)||");
+}
+//아이
+void character_c()
+{
+	int x = 75;
+	int y = 3;
+	gotoxy(x, y);
+	printf("      ////^\\\\\\\\");
+	gotoxy(x, y + 1);
+	printf("      | ^   ^ |");
+	gotoxy(x, y + 2);
+	printf("     @ (o) (o) @");
+	gotoxy(x, y + 3);
+	printf("      |   <   |");
+	gotoxy(x, y + 4);
+	printf("      |  ___  |");
+	gotoxy(x, y + 5);
+	printf("       \\_____/");
+	gotoxy(x, y + 6);
+	printf("     ____|  |____");
+	gotoxy(x, y + 7);
+	printf("    /    \\__/    \\");
+	gotoxy(x, y + 8);
+	printf("   /              \\");
+	gotoxy(x, y + 9);
+	printf("  /\\_/|        |\\_/\\");
+	gotoxy(x, y + 10);
+	printf(" / /  |        |  \\ \\");
+	gotoxy(x, y + 11);
+	printf(" \\ \\  |________|  / /");
+	gotoxy(x, y + 12);
+	printf(" (()) |        | (())");
+	gotoxy(x, y + 13);
+	printf("      |   ||   |");
+	gotoxy(x, y + 14);
+	printf("      |___||___|");
+	gotoxy(x, y + 15);
+	printf("       (  | (  |");
+	gotoxy(x, y + 16);
+	printf("       |  | |  |");
+	gotoxy(x, y + 17);
+	printf("       |  | |  |");
+	gotoxy(x, y + 18);
+	printf("   cccC__Cccc___)");
+} 
+
+int select_chose()
+{
+	int x = 20;
+	int y = 25;
+	gotoxy(x, y);
+	printf("> 정찰");
+	gotoxy(x + 20, y);
+	printf("  캐릭터 관리");
+	gotoxy(x + 40, y);
+	printf("  다음날");
+	gotoxy(x + 60, y);
+	printf("  세이브");
+
+
+	while (1)
+	{
+		int n = keycontrol();
+		switch (n)
+		{
+		case LEFT:
+		{
+			if (x > 20)
+			{
+				gotoxy(x, y);
+				printf("  ");
+				for (int i = 0; i < 20; i++)
+				{
+					x--;
+				}
+				gotoxy(x, y);
+				printf(">");
+
+			}
+			break;
+		}
+		
+		case RIGHT:
+		{
+			if (x < 80)
+			{
+				gotoxy(x, y);
+				printf("  ");
+				for (int i = 0; i < 20; i++)
+				{
+					x++;
+				}
+				gotoxy(x, y);
+				printf(">");
+
+			}
+			break;
+		}
+		case SELECT:
+		{
+			return x - 20;
+		}
+
+		}
+
+	}
+
+}
+
+int explore_explain()
+{
+	int x = 1;
+	int y = 24;
+	gotoxy(x, y);
+	printf("누구를 탐험에 보내겠습니까? ");
+}
+
+int human_select()
+{
+		int x = 20;
+		int y = 25;
+		gotoxy(x, y);
+		printf("> 어머니");
+		gotoxy(x + 20, y);
+		printf("  아버지");
+		gotoxy(x + 40, y);
+		printf("  아이");
+		gotoxy(x + 60, y);
+		printf("  돌아가기");
+
+
+
+		while (1)
+		{
+			int n = keycontrol();
+			switch (n)
+			{
+			case LEFT:
+			{
+				if (x > 20)
+				{
+					gotoxy(x, y);
+					printf("  ");
+					for (int i = 0; i < 20; i++)
+					{
+						x--;
+					}
+					gotoxy(x, y);
+					printf(">");
+
+				}
+				break;
+			}
+
+			case RIGHT:
+			{
+				if (x < 80)
+				{
+					gotoxy(x, y);
+					printf("  ");
+					for (int i = 0; i < 20; i++)
+					{
+						x++;
+					}
+					gotoxy(x, y);
+					printf(">");
+
+				}
+				break;
+			}
+			case SELECT:
+			{
+				return x - 20;
+			}
+
+			}
+
+		}
+
+}
+
+int explore_object_select()
+{
+
+	{
+		int x = 20;
+		int y = 25;
+		gotoxy(x, y);
+		printf("> 총을 가져간다");
+		gotoxy(x + 30, y);
+		printf("  그냥 간다");
+		gotoxy(x + 60, y);
+		printf("  돌아가기");
+
+
+
+		while (1)
+		{
+			int n = keycontrol();
+			switch (n)
+			{
+			case LEFT:
+			{
+				if (x > 20)
+				{
+					gotoxy(x, y);
+					printf("  ");
+					for (int i = 0; i < 30; i++)
+					{
+						x--;
+					}
+					gotoxy(x, y);
+					printf(">");
+
+				}
+				break;
+			}
+
+			case RIGHT:
+			{
+				if (x < 80)
+				{
+					gotoxy(x, y);
+					printf("  ");
+					for (int i = 0; i < 30; i++)
+					{
+						x++;
+					}
+					gotoxy(x, y);
+					printf(">");
+
+				}
+				break;
+			}
+			case SELECT:
+			{
+				return x - 20;
+			}
+
+			}
+
+		}
+
+	}
+}
+
+int object_select()
+
+{
+	int x = 20;
+	int y = 25;
+	gotoxy(x, y);
+	printf("> 식량");
+	gotoxy(x + 20, y);
+	printf("  물");
+	gotoxy(x + 40, y);
+	printf("  상태창");
+	gotoxy(x + 60, y);
+	printf("  돌아가기");
+
+
+
+	while (1)
+	{
+		int n = keycontrol();
+		switch (n)
+		{
+		case LEFT:
+		{
+			if (x > 20)
+			{
+				gotoxy(x, y);
+				printf("  ");
+				for (int i = 0; i < 20; i++)
+				{
+					x--;
+				}
+				gotoxy(x, y);
+				printf(">");
+
+			}
+			break;
+		}
+
+		case RIGHT:
+		{
+			if (x < 80)
+			{
+				gotoxy(x, y);
+				printf("  ");
+				for (int i = 0; i < 20; i++)
+				{
+					x++;
+				}
+				gotoxy(x, y);
+				printf(">");
+
+			}
+			break;
+		}
+		case SELECT:
+		{
+			return x - 20;
+		}
+
+		}
+
+	}
+
+}
+
+int object_draw()
+{
+	int x = 1;
+	int y = 1;
+	gotoxy(x, y);
+	
+}
+
+void skull(int x, int y)
+{
+	gotoxy(x, y);
+	printf("             ..ooo@@@XXX%%%%%%xx..");
+	gotoxy(x, y + 1);
+	printf("          .oo@@XXX%%x%%xxx..     ` .");
+	gotoxy(x, y + 2);
+	printf("        .o@XX%%%%xx..               ` .");
+	gotoxy(x, y + 3);
+	printf("      o@X%%..                  ..ooooooo");
+	gotoxy(x, y + 4);
+	printf("    .@X%%x.                 ..o@@^^   ^^@@o");
+	gotoxy(x, y + 5);
+	printf("  .ooo@@@@@@ooo..      ..o@@^          @X%");
+	gotoxy(x, y + 6);
+	printf("  o@@^^^     ^^^@@@ooo.oo@@^             %");
+	gotoxy(x, y + 7);
+	printf(" xzI    -*--      ^^^o^^        --*-     %");
+	gotoxy(x, y + 8);
+	printf(" @@@o     ooooooo^@@^o^@X^@oooooo     .X%%x");
+	gotoxy(x, y + 9);
+	printf("I@@@@@@@@@XX%%xx  ( o@o )X%%x@ROMBASED@@@X%%x");
+	gotoxy(x, y + 10);
+	printf("I@@@@XX%%%%xx  oo@@@@X%% @@X%%x   ^^^@@@@@@@X%%x");
+	gotoxy(x, y + 11);
+	printf(" @X%%xx     o@@@@@@@X%% @@XX%%%%x  )    ^^@X%%x");
+	gotoxy(x, y + 12);
+	printf("  ^   xx o@@@@@@@@Xx  ^ @XX%%%%x    xxx");
+	gotoxy(x, y + 13);
+	printf("        o@@^^^ooo I^^ I^o ooo   .  x");
+	gotoxy(x, y + 14);
+	printf("        oo @^ IX      I   ^X  @^ oo");
+	gotoxy(x, y + 15);
+	printf("        IX     U  .        V     IX");
+	gotoxy(x, y + 16);
+	printf("         V     .           .     V");
+}
+
+void youdied_draw(int x, int y)
+{
+	gotoxy(x, y + 16);
+	printf("__   __ _____  _   _  ______  _____  _____ ______");
+	gotoxy(x, y + 17);
+	printf("\\ \\ / /|  _  || | | | |  _  \\|_   _||  ___||  _  \\");
+	gotoxy(x, y + 18);
+	printf(" \\ V / | | | || | | | | | | |  | |  | |__  | | | |");
+	gotoxy(x, y + 19);
+	printf("  \\ /  | | | || | | | | | | |  | |  |  __| | | | |");
+	gotoxy(x, y + 20);
+	printf("  | |  \\ \\_/ /| |_| | | |/ /  _| |_ | |___ | |/ /");
+	gotoxy(x, y + 21);
+	printf("  \\_/   \\___/  \\___/  |___/   \\___/ \\____/ |___/");
+}
+
+int healdraw()
+{
+	int x = 85;
+	int y = 24;
+	gotoxy(x-2 , y);
+	setColor(white, black);
+	printf("> 구급상자를 사용한다");
+	gotoxy(x, y + 3);
+	printf("돌아가기");
+	while (1)
+	{
+		int n = keycontrol();
+		switch (n)
+		{
+		case UP:
+		{
+			if (y > 24)
+			{
+				gotoxy(x - 2, y);
+				printf(" ");
+				for (int i = 0; i < 3; i++)
+				{
+					y--;
+				}
+				gotoxy(x - 2, y);
+				printf(">");
+			}
+			break;
+		}
+		case DOWN:
+		{
+			if (y < 27)
+			{
+				gotoxy(x - 2, y);
+				printf(" ");
+				for (int i = 0; i < 3; i++)
+				{
+					y++;
+				}
+				gotoxy(x - 2, y);
+				printf(">");
+			}
+			break;
+		}
+		case SELECT:
+		{
+			return y - 24;
+		}
+		}
+	}
+
+}
+
+
+
+//물량감소
+
+//식량
+int eat_food(food)
+{
+	return obj.food -= 1;
+}
+
+int eat_water(water)
+{
+	return obj.water -= 1;
+}
+//hp설정
+int noeat_down(struct character_hp *all_hp)
+{
+	//a의 포만감,목마름에 따른 체력 관리
+	if (a_watereat >= 3 && a_watereat <= 5)
+	{
+		all_hp->a_hp -= 1;
+	}
+	if (a_foodeat >= 3 && a_foodeat <= 5)
+	{
+		all_hp->a_hp -= 1;
+	}
+	if (all_hp->a_hp <= 0)
+	{
+		all_hp->a_hp = 0;
+	}
+	if (a_watereat < 0)//물의 음수값x
+	{
+		a_watereat = 0;
+	}
+	if (a_foodeat < 0)//식량의 음수값x
+	{
+		a_foodeat = 0;
+	}
+
+	//b의 포만감,목마름에 따른 체력 관리
+	if (b_watereat >= 3 && b_watereat <= 5)
+	{
+		all_hp->b_hp -= 1;
+	}
+	if (b_foodeat >= 3 && b_foodeat <= 5)
+	{
+		all_hp->b_hp -= 1;
+	}
+	if (all_hp->b_hp <= 0)
+	{
+		all_hp->b_hp = 0;
+
+	}
+	if (b_watereat < 0)//물의 음수값x
+	{
+		b_watereat = 0;
+	}
+	if (b_foodeat < 0)//식량의 음수값x
+	{
+		b_foodeat = 0;
+	}
+
+	//c의 포만감,목마름에 따른 체력 관리
+	if (c_watereat >= 3 && c_watereat <= 5)
+	{
+		all_hp->c_hp -= 1;
+	}
+	if (c_foodeat >= 3 && c_foodeat <= 5)
+	{
+		all_hp->c_hp -= 1;
+	}
+	if (all_hp->c_hp <= 0)
+	{
+		all_hp->c_hp = 0;
+	}
+	if (c_watereat < 0)//물의 음수값x
+	{
+		c_watereat = 0;
+	}
+	if (c_foodeat < 0)//식량의 음수값x
+	{
+		c_foodeat = 0;
+	}
+}
+int heal_hp(struct character_hp *all_hp)
+{
+	if (heal_who == 0)
+	{
+		if (all_hp->a_hp == 0)
+		{
+			all_hp->a_hp = 0;
+		}
+		else if (all_hp->a_hp >= 3)
+		{
+			all_hp->a_hp = HP;
+			selectdraw();
+			gotoxy(1, 24);
+			printf("더이상 회복할 수 없습니다.");
+			gotoxy(1, 27);
+			printf("1초뒤 자동으로 화면이 넘어갑니다......");
+			Sleep(1000);
+		}
+		else
+		{
+			all_hp->a_hp += 1;
+			obj.healpack -= 1;
+		}
+	}
+	else if (heal_who == 1)
+	{
+		if (all_hp->b_hp == 0)
+		{
+			all_hp->b_hp = 0;
+		}
+		else if (all_hp->b_hp >= 3)
+		{
+			all_hp->b_hp = HP;
+			selectdraw();
+			gotoxy(1, 24);
+			printf("더이상 회복할 수 없습니다.");
+			gotoxy(1, 27);
+			printf("1초뒤 자동으로 화면이 넘어갑니다......");
+			Sleep(1000);
+		}
+		else
+		{
+			all_hp->b_hp += 1;
+			obj.healpack -= 1;
+		}
+	}
+	else if (heal_who == 2)
+	{
+		if (all_hp->c_hp == 0)
+		{
+			all_hp->c_hp = 0;
+		}
+		else if (all_hp->c_hp >= 3)
+		{
+			all_hp->c_hp = HP;
+			selectdraw();
+			gotoxy(1, 24);
+			printf("더이상 회복할 수 없습니다.");
+			gotoxy(1, 27);
+			printf("1초뒤 자동으로 화면이 넘어갑니다......");
+			Sleep(1000);
+		}
+		else
+		{
+			all_hp->c_hp += 1;
+			obj.healpack -= 1;
+		}
+	}
+}
+//유다희양
+int you_died(struct character_hp *all_hp)
+{
+	if (all_hp->a_hp <= 0 && all_hp->b_hp <= 0 && all_hp->c_hp <= 0)
+	{
+		system("cls");
+		int x = 35;
+		int y = 5;
+		youdied_draw(x, y);
+		skull(x, y);
+		youdied = 0;
+		Sleep(2000);
+		system("cls");
+		gotoxy(35, 10);
+		printf("모든 사람들이 죽었습니다.");
+		gotoxy(35, 11);
+		printf("ENTER키를 눌러주세요.......");
+		while (1)
+		{
+			if (keycontrol() == SELECT)
+			{
+				break;
+			}
+		}
+
+	}
+}
+
+
+//날짜 출력 및 이벤트 발생
+int daydraw(int date)
+{
+	if (date == 1)
+	{
+		secondday_epilog();;
+		special_select = special_event();
+		special_result(&hp, &obj);
+		if (days_error == 0)
+		{
+			days_error = 0;
+		}
+		if (explore_q == 1 && days_error == 1)
+		{
+			explore_q = 0;
+			fristday_random();
+			days_error = 1;
+		}
+	}
+	else if (date == 2)
+	{
+		thirdday_epilog();
+		special_select = special_event();
+		special_result(&hp, &obj);
+		nomal_event();
+		nomal_result(&hp, &obj);
+
+		if (days_error == 0)
+		{
+			days_error = 0;
+		}
+		if (explore_q == 1 && days_error == 1)
+		{
+			explore_q = 0;
+			secondday_random();
+			days_error = 1;
+		}
+	}
+	else if (date == 3)
+	{
+		fourthday_epilog();
+		special_select = special_event();
+		special_result(&hp, &obj);
+		nomal_event();
+		nomal_result(&hp, &obj);
+		if (days_error == 0)
+		{
+			days_error = 0;
+		}
+		if (explore_q == 1 && days_error == 1)
+		{
+			explore_q = 0;
+			thirdday_random();
+			days_error = 1;
+		}
+	}
+	else if (date == 4)
+	{
+		fifthday_epilog();
+		special_select = special_event();
+		special_result(&hp, &obj);
+		nomal_event();
+		nomal_result(&hp, &obj);
+		if (days_error == 0)
+		{
+			days_error = 0;
+		}
+		if (explore_q == 1 && days_error == 1)
+		{
+			explore_q = 0;
+			fourthday_random();
+			days_error = 1;
+		}
+	}
+	else if (date == 5)
+	{
+		sixthday_epilog();
+		special_select = special_event();
+		special_result(&hp, &obj);
+		nomal_event();
+		nomal_result(&hp, &obj);
+		if (days_error == 0)
+		{
+			days_error = 0;
+		}
+		if (explore_q == 1 && days_error == 1)
+		{
+			explore_q = 0;
+			fifthday_random();
+			days_error = 1;
+		}
+	}
+	else if (date == 6)
+	{
+		seventhday_epilog();
+		special_select = special_event();
+		special_result(&hp, &obj);
+		nomal_event();
+		nomal_result(&hp, &obj);
+		if (days_error == 0)
+		{
+			days_error = 0;
+		}
+		if (explore_q == 1 && days_error == 1)
+		{
+			explore_q = 0;
+			sixthday_random();
+			days_error = 1;
+		}
+	}
+	else if (date == 7)
+	{
+		eighthday_epilog();
+		special_select = special_event();
+		special_result(&hp, &obj);
+		nomal_event();
+		nomal_result(&hp, &obj);
+		if (days_error == 0)
+		{
+			days_error = 0;
+		}
+		if (explore_q == 1 && days_error == 1)
+		{
+			explore_q = 0;
+			seventhday_random();
+			days_error = 1;
+		}
+	}
+	else if (date == 8)
+	{
+	ninthday_epilog();
+	special_select = special_event();
+	special_result(&hp, &obj);
+	nomal_event();
+	nomal_result(&hp, &obj);
+		if (days_error == 0)
+		{
+			days_error = 0;
+		}
+		if (explore_q == 1 && days_error == 1)
+		{
+			explore_q = 0;
+			eighthday_random();
+			days_error = 1;
+		}
+	}
+	else if (date == 9)
+	{
+	ninthday_epilog();
+	special_select = special_event();
+	special_result(&hp, &obj);
+	nomal_event();
+	nomal_result(&hp, &obj);
+		if (days_error == 0)
+		{
+			days_error = 0;
+		}
+		if (explore_q == 1 && days_error == 1)
+		{
+			explore_q = 0;
+			ninthday_random();
+			days_error = 1;
+		}
+	}
+	else if (date == 10)
+	{
+	eleventhday_epilog();
+	special_select = special_event();
+	special_result(&hp, &obj);
+	nomal_event();
+	nomal_result(&hp, &obj);
+		if (days_error == 0)
+		{
+			days_error = 0;
+		}
+		if (explore_q == 1 && days_error == 1)
+		{
+			explore_q = 0;
+			tenthday_random();
+			days_error = 1;
+		}
+	}
+	else if (date == 11)
+	{
+	twelfthday_epilog();
+	special_select = special_event();
+	special_result(&hp, &obj);
+	nomal_event();
+	nomal_result(&hp, &obj);
+		if (days_error == 0)
+		{
+			days_error = 0;
+		}
+		if (explore_q == 1 && days_error == 1)
+		{
+			explore_q = 0;
+			eleventhday_random();
+			days_error = 1;
+		}
+	}
+	else if (date == 12)
+	{
+	thirteenthday_epilog();
+	special_select = special_event();
+	special_result(&hp, &obj);
+	nomal_event();
+	nomal_result(&hp, &obj);
+		if (days_error == 0)
+		{
+			days_error = 0;
+		}
+		if (explore_q == 1 && days_error == 1)
+		{
+			explore_q = 0;
+			twelfthday_random();
+			days_error = 1;
+		}
+	}
+	else if (date == 13)
+	{
+	thirteenthday_epilog();
+	special_select = special_event();
+	special_result(&hp, &obj);
+	nomal_event();
+	nomal_result(&hp, &obj);
+		if (days_error == 0)
+		{
+			days_error = 0;
+		}
+		if (explore_q == 1 && days_error == 1)
+		{
+			explore_q = 0;
+			thirteenthday_random();
+			days_error = 1;
+		}
+	}
+	else if (date == 14)
+	{
+	fourteenthday_epilog();
+	special_select = special_event();
+	special_result(&hp, &obj);
+	nomal_event();
+	nomal_result(&hp, &obj);
+		if (days_error == 0)
+		{
+			days_error = 0;
+		}
+		if (explore_q == 1 && days_error == 1)
+		{
+			explore_q = 0;
+			fourteenthday_random();
+			days_error = 1;
+		}
+	}
+}
+
+// 랜덤 인카운터
+int special_event()
+{
+	int x = 19;
+	int y = 15;
+	int X = 25;
+	int Y = 25;
+	srand((unsigned)time(NULL));
+	int rand_sevent = (rand() % 100) + 1;
+	if (rand_sevent <= 7||days==6)
+	{
+		gotoxy(x, y);
+		printf("문을 두드리는 소리가 나서 확인해 봤더니 문 밖엔 낯선 보따리 상인이 있었다");
+		gotoxy(x, y + 2);
+		printf("그는 우리에게 한 거래를 제안했다.");
+		gotoxy(x + 6, y + 4);
+		printf("<나에게 물 한 개를 준다면, 식량을 두개 주도록 하지>");
+		gotoxy(X, Y);
+		printf("> 거래한다");
+		gotoxy(X + 50, Y);
+		printf("  거래하지 않는다");
+		special_num = 1;
+		while (1)
+		{
+			int n = keycontrol();
+			switch (n)
+			{
+			case LEFT:
+			{
+				if (X > 25)
+				{
+					gotoxy(X, Y);
+					printf("  ");
+					for (int i = 0; i < 50; i++)
+					{
+						X--;
+					}
+					gotoxy(X, Y);
+					printf(">");
+
+				}
+				break;
+			}
+
+			case RIGHT:
+			{
+				if (X < 75)
+				{
+					gotoxy(X, Y);
+					printf("  ");
+					for (int i = 0; i < 50; i++)
+					{
+						X++;
+					}
+					gotoxy(X, Y);
+					printf(">");
+
+				}
+				break;
+			}
+			case SELECT:
+			{
+				return X - 50;
+			}
+			}
+
+		}
+	}
+	else if (rand_sevent < 50 && rand_sevent > 52||days ==11)
+	{
+		gotoxy(x, y);
+		printf("건장해 보이는 남성이 찾아왔다. 자신이 군인이라며 무기를 빌려달라고 한다.");
+		gotoxy(x, y + 2);
+		printf("무기를 빌려주면 크게 보답을 해주겠다고 한다. 총을 가지고 있긴 하지만... 빌려주어야 할까?");
+		gotoxy(x + 6, y + 4);
+		printf("<난 군인일세 총과 물자를 조금만 빌려준다면 명예를 걸고 반드시 보답하겠네>");
+		gotoxy(X, Y);
+		printf("> 빌려준다");
+		gotoxy(X + 50, Y);
+		printf("  빌려주지 않는다");
+		special_num = 2;
+		while (1)
+		{
+			int n = keycontrol();
+			switch (n)
+			{
+			case LEFT:
+			{
+				if (X > 25)
+				{
+					gotoxy(X, Y);
+					printf("  ");
+					for (int i = 0; i < 50; i++)
+					{
+						X--;
+					}
+					gotoxy(X, Y);
+					printf(">");
+
+				}
+				break;
+			}
+
+			case RIGHT:
+			{
+				if (X < 75)
+				{
+					gotoxy(X, Y);
+					printf("  ");
+					for (int i = 0; i < 50; i++)
+					{
+						X++;
+					}
+					gotoxy(X, Y);
+					printf(">");
+
+				}
+				break;
+			}
+			case SELECT:
+			{
+				return X - 50;
+			}
+			}
+
+		}
+	}
+	else if (rand_sevent > 95||days==4)
+	{
+		gotoxy(x, y);
+		printf("바깥에서 소란스러운 소리가 들린다.");
+		gotoxy(x, y + 2);
+		printf("사이렌 소리와 헬기 소리인거 같은데...");
+		gotoxy(x, y + 4);
+		printf("바깥에 나가서 상황을 살펴볼까??");
+		gotoxy(X, Y);
+		printf("> 나가본다");
+		gotoxy(X + 50, Y);
+		printf("  나가보지 않는다");
+		special_num = 3;
+		while (1)
+		{
+			int n = keycontrol();
+			switch (n)
+			{
+			case LEFT:
+			{
+				if (X > 25)
+				{
+					gotoxy(X, Y);
+					printf("  ");
+					for (int i = 0; i < 50; i++)
+					{
+						X--;
+					}
+					gotoxy(X, Y);
+					printf(">");
+
+				}
+				break;
+			}
+
+			case RIGHT:
+			{
+				if (X < 75)
+				{
+					gotoxy(X, Y);
+					printf("  ");
+					for (int i = 0; i < 50; i++)
+					{
+						X++;
+					}
+					gotoxy(X, Y);
+					printf(">");
+
+				}
+				break;
+			}
+			case SELECT:
+			{
+				return X - 50;
+			}
+			}
+
+		}
+	}
+	else if (rand_sevent>=70&& rand_sevent<=80||days==7)
+	{
+		gotoxy(x, y);
+		printf("정찰을 마치고 돌아오는 길에, 자신이 의사라고");
+		gotoxy(x, y + 1);
+		printf("주장하는 어느 부랑자를 만났다.");
+		gotoxy(x, y + 2);
+		printf("그 의사가 말하기를 자신 방공호로 데려가 준다면");
+		gotoxy(x, y + 3);
+		printf("다친 사람을 치료해 준다고 한다.어떻게 할까 ? ");
+		gotoxy(X, Y);
+		printf("> 데려간다");
+		gotoxy(X + 50, Y);
+		printf("  데려가지 않는다");
+		special_num = 4;
+		while (1)
+		{
+			int n = keycontrol();
+			switch (n)
+			{
+			case LEFT:
+			{
+				if (X > 25)
+				{
+					gotoxy(X, Y);
+					printf("  ");
+					for (int i = 0; i < 50; i++)
+					{
+						X--;
+					}
+					gotoxy(X, Y);
+					printf(">");
+
+				}
+				break;
+			}
+
+			case RIGHT:
+			{
+				if (X < 75)
+				{
+					gotoxy(X, Y);
+					printf("  ");
+					for (int i = 0; i < 50; i++)
+					{
+						X++;
+					}
+					gotoxy(X, Y);
+					printf(">");
+
+				}
+				break;
+			}
+			case SELECT:
+			{
+				return X - 50;
+			}
+			}
+
+		}
+	}
+	
+}
+void special_result(struct character_hp *all_hp, struct object *all_obj)
+{
+	int x = 10;
+	int y = 24;
+	if (special_num == 1)
+	{
+		if (special_select == 0)
+		{
+			system("cls");
+			selectdraw();
+			gotoxy(x, y);
+			printf("좋은 생각이야, 친구들 ");
+			all_obj->water -= 1;
+			all_obj->food += 2;
+		}
+		else if (special_select == 25)
+		{
+			system("cls");
+			selectdraw();
+			gotoxy(x, y);
+			printf("어쩔 수 없지, 당신들은 좋은 기회를 놓친거야 ! ");
+			hidden += 1;
+		}
+		while (1)
+		{
+			gotoxy(x, y + 3);
+			printf("ENTER키를 누르시오......");
+			if (keycontrol() == SELECT)
+			{
+				break;
+			}
+		}
+		system("cls");
+	}
+	else if(special_num == 2)
+	{
+		if (special_select == 0)
+		{
+			system("cls");
+			selectdraw();
+			gotoxy(x, y);
+			printf("고맙소.. 이 은혜 반드시 보답하겠소 ");
+			all_obj->gun -= 1;
+			all_obj->food -= 2;
+			all_obj->water -= 2;
+			hidden += 1;
+		}
+		else if (special_select == 25)
+		{
+			system("cls");
+			selectdraw();
+			gotoxy(x, y);
+			printf("본좌를 믿지 못 한다면 어쩔수 없지....");
+			hidden -= 20;
+		}
+		while (1)
+		{
+			gotoxy(x, y + 3);
+			printf("ENTER키를 누르시오......");
+			if (keycontrol() == SELECT)
+			{
+				break;
+			}
+		}
+		system("cls");
+	}
+	else if (special_num == 3)
+	{
+		if (special_select == 0)
+		{
+			system("cls");
+			selectdraw();
+			gotoxy(x, y);
+			printf("밖에 나와보니 무법자들의 함정이였다");
+			all_hp->a_hp -= 1;
+			all_hp->b_hp -= 1;
+			all_hp->c_hp -= 1;
+		}
+		else if (special_select == 25)
+		{
+			system("cls");
+			selectdraw();
+			gotoxy(x, y);
+			printf("갑자기 소리가 멈췄고, 밖에서 비명소리가 들렸다..... ");
+			hidden += 1;
+		}
+		while (1)
+		{
+			gotoxy(x, y + 3);
+			printf("ENTER키를 누르시오......");
+			if (keycontrol() == SELECT)
+			{
+				break;
+			}
+		}
+		system("cls");
+	}
+	else if (special_num == 4)
+	{
+		if (special_select == 0)
+		{
+			system("cls");
+			selectdraw();
+			gotoxy(x, y);
+			printf("이젠 괜찮을거야, 친구들. 인연이 닿는다면 또 보자구");
+			all_hp->a_hp += 1;
+			all_hp->b_hp += 1;
+			all_hp->c_hp += 1;
+			hidden += 1;
+		}
+		else if (special_select == 25)
+		{
+			system("cls");
+			selectdraw();
+			gotoxy(x, y);
+			printf("아쉽지만 어쩔수 없군 치료 대신이걸 주도록하지......인연이 닿는다면 언젠간 다시 보게되겠지");
+			all_obj->healpack += 1;
+		}
+		while (1)
+		{
+			gotoxy(x, y + 3);
+			printf("ENTER키를 누르시오......");
+			if (keycontrol() == SELECT)
+			{
+				break;
+			}
+		}
+		system("cls");
+	}
+}
+void nomal_event()
+{
+	int x = 19;
+	int y = 15;
+	srand((unsigned)time(NULL));
+	int rand_nevent = (rand() % 100) + 1;
+	if (luckygun == 1)
+	{
+		if (rand_nevent > 0 && rand_nevent <= 25)
+		{
+			gotoxy(x, y);
+			printf("운이 좋았다!! 저 멀리에 마트가 보였다.");
+			gotoxy(x, y + 2);
+			printf("많은 식량을 챙기진 못했지만 부상 없이 벙커로 복귀할 수 있었다!");
+			gotoxy(x + 6, y + 4);
+			printf("<식량을 2개 획득하였습니다!!>");
+			nomal_num = 1;
+		}
+		else if (rand_nevent >= 26 && rand_nevent <= 50)
+		{
+			gotoxy(x, y);
+			printf("아직도 바깥의 상황은 열악했다..");
+			gotoxy(x, y + 2);
+			printf("부식 된 건물이 무너지면서 생겨난 파편에 발을 찍혀 상처를 입게 되었다.");
+			gotoxy(x + 6, y + 4);
+			printf("<정찰을 나간 캐릭터의 hp가 1감소하였습니다>");
+			nomal_num = 2;
+		}
+		else if (rand_nevent >= 51 && rand_nevent <= 65)
+		{
+			gotoxy(x, y);
+			printf("바깥은 군인들이 물자를 보급중이었다.");
+			gotoxy(x, y + 2);
+			printf("군인들은 우리에게 물 뿐만 아니라 구급상자도 주었다!!");
+			gotoxy(x + 6, y + 4);
+			printf("<물을 1개,구급상자를 1개 획득하였습니다!!>");
+			nomal_num = 3;
+		}
+		else if (rand_nevent >= 66 && rand_nevent < 80)
+		{
+			gotoxy(x, y);
+			printf("밖을 탐사하던 도중, 강도들이 머물던 것으로 생각되는 장소를 발견했다.");
+			gotoxy(x, y + 2);
+			printf("무엇이 있는지 둘러보다가 어느 가방을 열어 보았다. 조금의 식량과 총을 획득했다");
+			gotoxy(x + 6, y + 4);
+			printf("<식량 1개와 총 1개를 획듣하였습니다!!>");
+			nomal_num = 4;
+		}
+		else if (rand_nevent >= 80 && rand_nevent <= 100)
+		{
+			gotoxy(x, y);
+			printf("밖을 탐사하던 도중, 강도들과 조우하게되었다");
+			gotoxy(x, y + 2);
+			printf("그들은 식량과 물을 준다면 보내주겠다고 협박한다");
+			gotoxy(x + 6, y + 4);
+			printf("<식량 2개와 물 2개를 잃었습니다>");
+			nomal_num = 5;
+		}
+	}
+	else
+	{
+		if (rand_nevent > 0 && rand_nevent <= 20)
+		{
+			gotoxy(x, y);
+			printf("운이 좋았다!! 저 멀리에 마트가 보였다.");
+			gotoxy(x, y + 2);
+			printf("많은 식량을 챙기진 못했지만 부상 없이 벙커로 복귀할 수 있었다!");
+			gotoxy(x + 6, y + 4);
+			printf("<식량을 2개 획득하였습니다!!>");
+			nomal_num = 1;
+		}
+		else if (rand_nevent >= 21 && rand_nevent <= 50)
+		{
+			gotoxy(x, y);
+			printf("아직도 바깥의 상황은 열악했다..");
+			gotoxy(x, y + 2);
+			printf("부식 된 건물이 무너지면서 생겨난 파편에 발을 찍혀 상처를 입게 되었다.");
+			gotoxy(x + 6, y + 4);
+			printf("<정찰을 나간 캐릭터의 hp가 1감소하였습니다>");
+			nomal_num = 2;
+		}
+		else if (rand_nevent >= 51 && rand_nevent <= 60)
+		{
+			gotoxy(x, y);
+			printf("바깥은 군인들이 물자를 보급중이었다.");
+			gotoxy(x, y + 2);
+			printf("군인들은 우리에게 물 뿐만 아니라 구급상자도 주었다!!");
+			gotoxy(x + 6, y + 4);
+			printf("<물을 1개,구급상자를 1개 획득하였습니다!!>");
+			nomal_num = 3;
+		}
+		else if (rand_nevent >= 61 && rand_nevent < 70)
+		{
+			gotoxy(x, y);
+			printf("밖을 탐사하던 도중, 무법자들이 머물던 것으로 생각되는 장소를 발견했다.");
+			gotoxy(x, y + 2);
+			printf("무엇이 있는지 둘러보다가 어느 가방을 열어 보았다. 조금의 식량과 총을 획득했다");
+			gotoxy(x + 6, y + 4);
+			printf("<식량 1개와 총 1개를 획듣하였습니다!!>");
+			nomal_num = 4;
+		}
+		else if (rand_nevent >= 71 && rand_nevent <= 100)
+		{
+			gotoxy(x, y);
+			printf("밖을 탐사하던 도중, 무법자들과 조우하게되었다");
+			gotoxy(x, y + 2);
+			printf("그들은 식량과 물을 준다면 보내주겠다고 협박한다");
+			gotoxy(x + 6, y + 4);
+			printf("<식량 2개와 물 2개를 잃었습니다>");
+			nomal_num = 5;
+		}
+	}
+	while (1)
+	{
+		gotoxy(x + 6, y + 8);
+		printf("ENTER키를 누르시오......");
+		if (keycontrol() == SELECT)
+		{
+			break;
+		}
+	}
+}
+void nomal_result (struct character_hp *all_hp, struct object *all_obj)
+{
+	if (nomal_num == 1)
+	{
+		all_obj->food += 2;
+	}
+	else if (nomal_num == 2)
+	{
+		if (who_explore == 1)
+			all_hp->a_hp -= 1;
+		else if (who_explore == 2)
+			all_hp->b_hp -= 1;
+		else if (who_explore == 2)
+			all_hp->c_hp -= 1;
+	}
+	else if (nomal_num == 3)
+	{
+		all_obj->water += 1;
+		all_obj->healpack += 1;
+	}
+	else if (nomal_num == 4)
+	{
+		all_obj->food += 1;
+		all_obj->gun += 1;
+	}
+	else if (nomal_num == 5)
+	{
+		all_obj->food -= 2;
+		all_obj->water -= 2;
+	}
+}
+//첫쨰날
+int fristday_random()
+{
+	srand((unsigned)time(NULL));
+
+	random_food = (rand() % 100) + 1;
+	random_water = (rand() % 100) + 1;
+	random_healpack = (rand() % 100) + 1;
+	random_gun = (rand() % 100) + 1;
+
+	if (explore_gowithgun == 1) //총O
+	{
+		if (random_food > 70)
+		{
+			obj.food += 1;
+		}
+		if (random_water > 60 && random_water < 80)
+		{
+			obj.water += 1;
+		}
+		if (random_healpack >= 1)
+		{
+			obj.healpack += 1;
+		}
+		if (random_gun >= 30 && random_gun <= 80)
+		{
+			obj.gun += random_objnumber_middle;
+		}
+	}
+	else if(explore_gowithgun == 0) //총X
+	{
+		if (random_food > 90)
+		{
+			obj.food += 1;
+		}
+		if (random_water > 70 && random_water < 80)
+		{
+			obj.water += 1;
+		}
+		if (random_healpack >= 30)
+		{
+			obj.healpack += 1;
+		}
+		if (random_gun >= 30 && random_gun <= 40)
+		{
+			obj.gun += random_objnumber_high;
+		}
+	}
+}
+//둘쨰날
+int secondday_random()
+{
+	srand((unsigned)time(NULL));
+
+	random_food = (rand() % 100) + 1;
+	random_water = (rand() % 100) + 1;
+	random_healpack = (rand() % 100) + 1;
+	random_gun = (rand() % 100) + 1;
+
+	if (explore_gowithgun == 1) //총O
+	{
+		if (random_food > 70)
+		{
+			obj.food += 1;
+		}
+		if (random_water > 50 && random_water < 80)
+		{
+			obj.water += 1;
+		}
+		if (random_healpack >= 50)
+		{
+			obj.healpack += random_objnumber_low;
+		}
+		if (random_gun >= 30 && random_gun <= 80)
+		{
+			obj.gun += random_objnumber_middle;
+		}
+	}
+	else if (explore_gowithgun == 0) //총X
+	{
+		if (random_food > 80)
+		{
+			obj.food += random_objnumber_low;
+		}
+		if (random_water > 70 && random_water < 80)
+		{
+			obj.water += 1;
+		}
+		if (random_healpack >= 30 && random_healpack <= 40)
+		{
+			obj.healpack += 1;
+		}
+		if (random_gun >= 30 && random_gun <= 40)
+		{
+			obj.gun += random_objnumber_high;
+		}
+	}
+}
+//셋째날
+int thirdday_random()
+{
+	srand((unsigned)time(NULL));
+
+	random_food = (rand() % 100) + 1;
+	random_water = (rand() % 100) + 1;
+	random_healpack = (rand() % 100) + 1;
+	random_gun = (rand() % 100) + 1;
+
+	if (explore_gowithgun == 1) //총O
+	{
+		if (random_food > 65)
+		{
+			obj.food += 1;
+		}
+		if (random_water > 50 && random_water < 80)
+		{
+			obj.water += 1;
+		}
+		if (random_healpack >= 50)
+		{
+			obj.healpack += 1;
+		}
+		if (random_gun >= 30 && random_gun <= 75)
+		{
+			obj.gun += random_objnumber_low;
+		}
+	}
+	else if (explore_gowithgun == 0) //총X
+	{
+		if (random_food > 90)
+		{
+			obj.food += 1;
+		}
+		if (random_water > 70 && random_water < 80)
+		{
+			obj.water += 1;
+		}
+		if (random_healpack >= 30)
+		{
+			obj.healpack += 1;
+		}
+		if (random_gun >= 30 && random_gun <= 40)
+		{
+			obj.gun += random_objnumber_middle;
+		}
+	}
+}
+//넷째날
+int fourthday_random()
+{
+	srand((unsigned)time(NULL));
+
+	random_food = (rand() % 100) + 1;
+	random_water = (rand() % 100) + 1;
+	random_healpack = (rand() % 100) + 1;
+	random_gun = (rand() % 100) + 1;
+
+	if (explore_gowithgun == 1) //총O
+	{
+		if (random_food > 60)
+		{
+			obj.food += 1;
+		}
+		if (random_water > 50 && random_water < 80)
+		{
+			obj.water += 1;
+		}
+		if (random_healpack >= 20 && random_healpack <= 60)
+		{
+			obj.healpack += 1;
+		}
+		if (random_gun >= 30 && random_gun <= 75)
+		{
+			obj.gun += random_objnumber_middle;
+		}
+	}
+	else if (explore_gowithgun == 0) //총X
+	{
+		if (random_food > 90)
+		{
+			obj.food += 1;
+		}
+		if (random_water > 60 && random_water < 80)
+		{
+			obj.water += 1;
+		}
+		if (random_healpack >= 50)
+		{
+			obj.healpack += random_objnumber_low;
+		}
+		if (random_gun >= 30 && random_gun <= 40)
+		{
+			obj.gun += random_objnumber_middle;
+		}
+	}
+}
+//다섯쨰날
+int fifthday_random()
+{
+	srand((unsigned)time(NULL));
+
+	random_food = (rand() % 100) + 1;
+	random_water = (rand() % 100) + 1;
+	random_healpack = (rand() % 100) + 1;
+	random_gun = (rand() % 100) + 1;
+
+	if (explore_gowithgun == 1) //총O
+	{
+		if (random_food > 50)
+		{
+			obj.food += 1;
+		}
+		if (random_water > 30 && random_water < 80)
+		{
+			obj.water += 1;
+		}
+		if (random_healpack >= 20)
+		{
+			obj.healpack += 1;
+		}
+		if (random_gun >= 30 && random_gun <= 60)
+		{
+			obj.gun += random_objnumber_low;
+		}
+	}
+	else if (explore_gowithgun == 0) //총X
+	{
+		if (random_food > 80)
+		{
+			obj.food += 1;
+		}
+		if (random_water > 60 && random_water < 80)
+		{
+			obj.water += 1;
+		}
+		if (random_healpack >= 20)
+		{
+			obj.healpack += 1;
+		}
+		if (random_gun >= 10 && random_gun <= 40)
+		{
+			obj.gun += random_objnumber_low;
+		}
+	}
+}
+//여섯째날
+int sixthday_random()
+{
+	srand((unsigned)time(NULL));
+
+	random_food = (rand() % 100) + 1;
+	random_water = (rand() % 100) + 1;
+	random_healpack = (rand() % 100) + 1;
+	random_gun = (rand() % 100) + 1;
+
+	if (explore_gowithgun == 1) //총O
+	{
+		if (random_food > 60)
+		{
+			obj.food += 1;
+		}
+		if (random_water > 40 && random_water < 80)
+		{
+			obj.water += 1;
+		}
+		if (random_healpack >= 70)
+		{
+			obj.healpack += 1;
+		}
+		if (random_gun >= 50 && random_gun <= 80)
+		{
+			obj.gun += random_objnumber_low;
+		}
+	}
+	else if (explore_gowithgun == 0) //총X
+	{
+		if (random_food > 90)
+		{
+			obj.food += 1;
+		}
+		if (random_water > 70 && random_water < 80)
+		{
+			obj.water += 1;
+		}
+		if (random_healpack >= 30)
+		{
+			obj.healpack += 1;
+		}
+		if (random_gun >= 30 && random_gun <= 40)
+		{
+			obj.gun += random_objnumber_high;
+		}
+	}
+}
+//일곱째날
+int seventhday_random()
+{
+	srand((unsigned)time(NULL));
+
+	random_food = (rand() % 100) + 1;
+	random_water = (rand() % 100) + 1;
+	random_healpack = (rand() % 100) + 1;
+	random_gun = (rand() % 100) + 1;
+
+	if (explore_gowithgun == 1) //총O
+	{
+		if (random_food > 55)
+		{
+			obj.food += 1;
+		}
+		if (random_water > 40 && random_water < 80)
+		{
+			obj.water += 1;
+		}
+		if (random_healpack >= 70)
+		{
+			obj.healpack += 1;
+		}
+		if (random_gun >= 50 && random_gun <= 80)
+		{
+			obj.gun += random_objnumber_middle;
+		}
+	}
+	else if (explore_gowithgun == 0) //총X
+	{
+		if (random_food > 90)
+		{
+			obj.food += 1;
+		}
+		if (random_water > 70 && random_water < 80)
+		{
+			obj.water += 1;
+		}
+		if (random_healpack >= 30)
+		{
+			obj.healpack += 1;
+		}
+		if (random_gun >= 30 && random_gun <= 40)
+		{
+			obj.gun += random_objnumber_high;
+		}
+	}
+}
+//여덟째날
+int eighthday_random()
+{
+	srand((unsigned)time(NULL));
+
+	random_food = (rand() % 100) + 1;
+	random_water = (rand() % 100) + 1;
+	random_healpack = (rand() % 100) + 1;
+	random_gun = (rand() % 100) + 1;
+
+	if (explore_gowithgun == 1) //총O
+	{
+		if (random_food > 55)
+		{
+			obj.food += 1;
+		}
+		if (random_water > 40 && random_water < 80)
+		{
+			obj.water += 1;
+		}
+		if (random_healpack >= 70)
+		{
+			obj.healpack += 1;
+		}
+		if (random_gun >= 50 && random_gun <= 80)
+		{
+			obj.gun += random_objnumber_low;
+		}
+	}
+	else if (explore_gowithgun == 0) //총X
+	{
+		if (random_food > 90)
+		{
+			obj.food += 1;
+		}
+		if (random_water > 70 && random_water < 80)
+		{
+			obj.water += 1;
+		}
+		if (random_healpack >= 30)
+		{
+			obj.healpack += 1;
+		}
+		if (random_gun >= 30 && random_gun <= 40)
+		{
+			obj.gun += random_objnumber_high;
+		}
+	}
+}
+//아홉째날
+int ninthday_random()
+{
+	srand((unsigned)time(NULL));
+
+	random_food = (rand() % 100) + 1;
+	random_water = (rand() % 100) + 1;
+	random_healpack = (rand() % 100) + 1;
+	random_gun = (rand() % 100) + 1;
+
+	if (explore_gowithgun == 1) //총O
+	{
+		if (random_food > 50)
+		{
+			obj.food += 1;
+		}
+		if (random_water > 40 && random_water < 80)
+		{
+			obj.water += 1;
+		}
+		if (random_healpack >= 70)
+		{
+			obj.healpack += 1;
+		}
+		if (random_gun >= 50 && random_gun <= 80)
+		{
+			obj.gun += random_objnumber_low;
+		}
+	}
+	else if (explore_gowithgun == 0) //총X
+	{
+		if (random_food > 90)
+		{
+			obj.food += 1;
+		}
+		if (random_water > 70 && random_water < 80)
+		{
+			obj.water += 1;
+		}
+		if (random_healpack >= 30)
+		{
+			obj.healpack += 1;
+		}
+		if (random_gun >= 30 && random_gun <= 40)
+		{
+			obj.gun += random_objnumber_middle;
+		}
+	}
+}
+//열번째날
+int tenthday_random()
+{
+	srand((unsigned)time(NULL));
+
+	random_food = (rand() % 100) + 1;
+	random_water = (rand() % 100) + 1;
+	random_healpack = (rand() % 100) + 1;
+	random_gun = (rand() % 100) + 1;
+
+	if (explore_gowithgun == 1) //총O
+	{
+		if (random_food > 50)
+		{
+			obj.food += 1;
+		}
+		if (random_water > 30 && random_water < 80)
+		{
+			obj.water += 1;
+		}
+		if (random_healpack >= 60)
+		{
+			obj.healpack += 1;
+		}
+		if (random_gun >= 50 && random_gun <= 80)
+		{
+			obj.gun += random_objnumber_middle;
+		}
+	}
+	else if (explore_gowithgun == 0) //총X
+	{
+		if (random_food > 70)
+		{
+			obj.food += 1;
+		}
+		if (random_water > 50 && random_water < 80)
+		{
+			obj.water += 1;
+		}
+		if (random_healpack >= 50)
+		{
+			obj.healpack += 1;
+		}
+		if (random_gun >= 30 && random_gun <= 40)
+		{
+			obj.gun += random_objnumber_high;
+		}
+	}
+}
+//열한번째날
+int eleventhday_random()
+{
+	srand((unsigned)time(NULL));
+
+	random_food = (rand() % 100) + 1;
+	random_water = (rand() % 100) + 1;
+	random_healpack = (rand() % 100) + 1;
+	random_gun = (rand() % 100) + 1;
+
+	if (explore_gowithgun == 1) //총O
+	{
+		if (random_food > 40)
+		{
+			obj.food += 1;
+		}
+		if (random_water > 20 && random_water < 80)
+		{
+			obj.water += 1;
+		}
+		if (random_healpack >= 50)
+		{
+			obj.healpack += 1;
+		}
+		if (random_gun >= 60 && random_gun <= 80)
+		{
+			obj.gun += random_objnumber_high;
+		}
+	}
+	else if (explore_gowithgun == 0) //총X
+	{
+		if (random_food > 70)
+		{
+			obj.food += 1;
+		}
+		if (random_water > 50 && random_water < 80)
+		{
+			obj.water += 1;
+		}
+		if (random_healpack >= 50)
+		{
+			obj.healpack += 1;
+		}
+		if (random_gun >= 30 && random_gun <= 40)
+		{
+			obj.gun += random_objnumber_high;
+		}
+	}
+}
+//열두번째날
+int twelfthday_random()
+{
+	srand((unsigned)time(NULL));
+
+	random_food = (rand() % 100) + 1;
+	random_water = (rand() % 100) + 1;
+	random_healpack = (rand() % 100) + 1;
+	random_gun = (rand() % 100) + 1;
+
+	if (explore_gowithgun == 1) //총O
+	{
+		if (random_food > 80)
+		{
+			obj.food += 1;
+		}
+		if (random_water > 60 && random_water < 80)
+		{
+			obj.water += 1;
+		}
+		if (random_healpack >= 90)
+		{
+			obj.healpack += 1;
+		}
+		if (random_gun >= 60 && random_gun <= 80)
+		{
+			obj.gun += random_objnumber_middle;
+		}
+	}
+	else if (explore_gowithgun == 0) //총X
+	{
+		if (random_food > 95)
+		{
+			obj.food += 1;
+		}
+		if (random_water > 75 && random_water < 80)
+		{
+			obj.water += 1;
+		}
+		if (random_healpack >= 80)
+		{
+			obj.healpack += 1;
+		}
+		if (random_gun >= 30 && random_gun <= 40)
+		{
+			obj.gun += random_objnumber_high;
+		}
+	}
+}
+//열세번째날
+int thirteenthday_random()
+{
+	srand((unsigned)time(NULL));
+
+	random_food = (rand() % 100) + 1;
+	random_water = (rand() % 100) + 1;
+	random_healpack = (rand() % 100) + 1;
+	random_gun = (rand() % 100) + 1;
+
+	if (explore_gowithgun == 1) //총O
+	{
+		if (random_food > 40)
+		{
+			obj.food += 1;
+		}
+		if (random_water > 20 && random_water < 80)
+		{
+			obj.water += 1;
+		}
+		if (random_healpack >= 80)
+		{
+			obj.healpack += 1;
+		}
+		if (random_gun >= 60 && random_gun <= 80)
+		{
+			obj.gun += random_objnumber_middle;
+		}
+	}
+	else if (explore_gowithgun == 0) //총X
+	{
+		if (random_food > 70)
+		{
+			obj.food += 1;
+		}
+		if (random_water > 50 && random_water < 80)
+		{
+			obj.water += 1;
+		}
+		if (random_healpack >= 50)
+		{
+			obj.healpack += 1;
+		}
+		if (random_gun >= 30 && random_gun <= 40)
+		{
+			obj.gun += random_objnumber_low;
+		}
+	}
+}
+//열네번째날
+int fourteenthday_random()
+{
+	srand((unsigned)time(NULL));
+
+	random_food = (rand() % 100) + 1;
+	random_water = (rand() % 100) + 1;
+	random_healpack = (rand() % 100) + 1;
+	random_gun = (rand() % 100) + 1;
+
+	if (explore_gowithgun == 1) //총O
+	{
+		if (random_food > 80)
+		{
+			obj.food += 1;
+		}
+		if (random_water > 70 && random_water < 80)
+		{
+			obj.water += 1;
+		}
+		if (random_healpack >= 80)
+		{
+			obj.healpack += 1;
+		}
+		if (random_gun >= 60 && random_gun <= 80)
+		{
+			obj.gun += random_objnumber_high;
+		}
+	}
+	else if (explore_gowithgun == 0) //총X
+	{
+		if (random_food > 90)
+		{
+			obj.food += 1;
+		}
+		if (random_water > 70 && random_water < 80)
+		{
+			obj.water += 1;
+		}
+		if (random_healpack >= 80)
+		{
+			obj.healpack += 1;
+		}
+		if (random_gun >= 30 && random_gun <= 40)
+		{
+			obj.gun += random_objnumber_high;
+		}
+	}
+}
+
+//날짜별 에필로그
+void firstday_epilog()
+{
+	printf("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n");
+	printf("┃                                              < 1일 차 >                                                             ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                   우리 모두 폭발 직전에 방공호로 들어왔다. 간발의 차였지!                                           ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                   아무것도 가지고 들어오지 못했지만 방공호의 물품이 조금 있을 거야                                  ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                   모두가 함께 있는 한 어떻게든 여기서 살아남을 거다.                                                ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                  선반은 물과 통조림이 가득 차 있다. 통조림은 먹을 수 있고 물도 상하지 않은것 같아                   ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                  구조가 올떄까지 이 곳에서 살아남아야 한다                                                          ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n");
+}
+void secondday_epilog()
+{
+	printf("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n");
+	printf("┃                                              < 2일 차 >                                                             ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                   지금 상황을 고려하면 걱정을 안 하기가 더 어렵다. 이 안에 있는게 너무 힘들다.                      ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                   하지만 희망을 잃어선 안 되겠지. 조금 있으면 다시 일상으로 돌아 갈 수 있을거다                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                   세상이 아주 엉망이 되어버렸지만, 우리 가족은 잘 견디는 것 같다.                                   ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                   이 주변은 아직 방사능에 오염된 것 같다. 지금 밖으로 나가는 건 위험해보인다.                       ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n");
+}
+void thirdday_epilog()
+{
+	printf("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n");
+	printf("┃                                              < 3일 차 >                                                             ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                   여기 있는 게 너무 힘들다. 이 곳에 있는게 조금 그렇지만 어떻게든 최선을 다해야지,                  ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                   학교 친구들과 이웃들은 어떻게 되었을까? 대피소에 들어간걸까?                                      ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                   아니면... 더 심각한 상황에 처하게 될 었을지도 모르겠다.                                           ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n");
+}
+void fourthday_epilog()
+{
+	printf("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n");
+	printf("┃                                              < 4일 차 >                                                             ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                   평소와 전혀 다름없는 하루를 보내고 있었다. .이 곳에서의 하루는 굉장히 길게 느껴진다.              ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                   밖에 나갈떄라곤 부족한 물건을 구하러 나갈떄뿐이다.                                                ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                   하루빨리 행복했던 원래의 일상으로 돌아가고싶은 마음이 들 뿐이다.                                  ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n");
+}
+void fifthday_epilog()
+{
+	printf("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n");
+	printf("┃                                              < 5일 차 >                                                             ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                   참을성이 점점 없어져 간다. 밖의 세상이 어떻게 돌아가는지 확인할 필요가 있을 것 같다.              ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                   좁은 곳에서 생활하다 보니 답답해서 미칠 것만 같다. 먹는 것이라곤 통조림과 물뿐                    ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                   피자, 햄버거 같은 음식이 먹고싶다. 다시 먹을 날이 멀지 않았을것이다.                              ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n");
+}
+void sixthday_epilog()
+{
+	printf("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n");
+	printf("┃                                              < 6일 차 >                                                             ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                   공간이 넓지가 않으므로 냄새란 냄새는 다 맡게 된다. 방공호의 벽면한 구석에 조용하게 핀             ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                   공팡이와 처리할 수 없는 오물들의 냄새가 섞여 지독한 냄새가 난다                                   ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                   정말이지 지독하디 지독한 악취다!                                                                  ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n");
+}
+void seventhday_epilog()
+{
+	printf("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n");
+	printf("┃                                              < 7일 차 >                                                             ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                   며칠 전부터 벙커 문을 여는 문제로 엄마와 말다툼을 시작했다.                                       ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                   비좁은 방공호 안에서 말싸움을 한다는 건 좋지 못한 상황이다                                        ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                   서로 배려해 가며 살아가는 편이 좋을 것이다.                                                       ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n");
+}
+void eighthday_epilog()
+{
+	printf("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n");
+	printf("┃                                              < 8일 차 >                                                             ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                     점점 방공호 내부의 물품이 떨어져가고 있다. 밖에 나가야 하지만 무법자들과                        ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                     방사능을 뚫고 먹고 마실 걸 구해올 수 있을까?.....                                               ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                     부디 내일도 살아 있기를 신에게 빌 뿐이다                                                        ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                     밖에는 무법자와 방사능이 날뛰고 있다.                                                           ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n");
+}
+void ninthday_epilog()
+{
+	printf("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n");
+	printf("┃                                              < 9일 차 >                                                             ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                     방공호로 피신한지 벌서 9일이나 지났다 구조는 오지 않는것일까?                                   ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                     구조요청을 보내봤지만 답신이 오지 않는다... 그들은 우리를 버린것일까?                           ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                     다시 믿음을 가지고 구조를 기다릴 뿐이다..                                                       ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n");
+}
+void tenthday_epilog()
+{
+	printf("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n");
+	printf("┃                                              < 10일 차 >                                                            ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                   우리 가족은 이듬해 말 쯤 유럽 여행 계획을 세워서 유렵 곳곳을 여행하고 다닐 생각이었다.            ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                   하지만 모두 물거품이 되고 말았다. 이 곳에서 얼마나 더 머물러야 할까?                              ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                   점점 더 생활은 힘들어져가고만 있다...                                                             ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n");
+}
+void eleventhday_epilog()
+{
+	printf("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n");
+	printf("┃                                              < 11일 차 >                                                            ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                   물자는 계속 부족하고, 사기도 떨어졌다. 방공호에 절박한 분위기만 느껴진다.                         ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                   샤워를 한 지도 좀 되어서, 비좁은 방공호에서 나는 냄새는 향긋한 장미향과는 거리가 멀다.            ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                   좀 씻는 것도 생각해봤지만, 먹을 물도 부족한 판에 씻는 것에 물을 쓰는건 매우 아까울 것 같다.       ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n");
+}
+void twelfthday_epilog()
+{
+	printf("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n");
+	printf("┃                                              < 12일 차 >                                                            ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                   어제 군인이라고 하는 사람이 방공호를 왔다 갔다. 군인들은 가끔 물자만 보급해줄뿐                   ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                   우리를 구조해주려고 하지 않는다. 과연 진짜 구조가 오기는 할까...얼마나 더 기다려야 하는걸까..     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                   생활은 더 이상 버티기 힘들정도 무너져져가고만 있다...                                             ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n");
+}
+void thirteenthday_epilog()
+{
+	printf("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n");
+	printf("┃                                              < 13일 차 >                                                            ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                   이 지옥 같은 상황에서 우리를 구할 수 있는 건 우리 정부 뿐이다.                                    ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                   우리가 선량한 시민으로 있지 않으면... 더 심각한 상황에 처하게 될 지도 모른다.                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                   국가의 충성하던 우리였으니 반드시 구하러 올거라고 믿을 수 밖에 없다....                           ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n");
+}
+void fourteenthday_epilog()
+{
+	printf("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n");
+	printf("┃                                              < 14일 차 >                                                            ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                   문 밖에서 인기척이 들린다.이윽고 잠시 뒤, 바로 앞에서 발소리가 들렸다.                            ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                   문 밖에 누가 있다.. 조금 겁나긴 하지만 우리를 구하러 와 준 군인일 수도 있겠지!                    ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                   밖의 소리를 집중하여 들어 보자................                                                    ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n");
+}
+void hiddenend_epilog()
+{
+	printf("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n");
+	printf("┃                                              < 히든 엔딩 >                                                          ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                 군인이라며 문을 두드리며 구조하러 왔다는 목소리에 우리는 방공호의 문을 열어주었다                   ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                 방공호의 문을 열자 오랜시간 힘들었던 우리를 반기는 군인들의 [총구]....                              ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                 \"아아 여기는 델타-3팀, 여기는 델타-3팀  살아있는 생존자 발견 살아있는 생존자 발견                   ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                 작전대로 즉시 사살 하겠다\"                                                                          ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                 군인들이 우리에게 총을 쏘려고 할떄 갑자기 뒤에 있던 군인이 앞으로 나오며 명령하였다.                ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                \" 전 대원 발포 중지!\" 그 군인은 우리가 예전에 도움을 주었던 남자이였다.                              ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                \"당신들의 호의 덕분에 제가 무사할 수 있었습니다. 저희 부대와 함께 안전한 곳으로 가시죠\"              ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                 그에게서 사건의 전말을 들을 수 있었다. 핵폭탄이 터지고 해당지역이 방사능 떄문에                      ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                 여러가지 이상현상이 계속해서 일어나자 정부는 해당지역에 특수부대를 파견해 방사능에 오래             ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                 노출된 이들을 사살 및 격리 시키고 있던것이다.                                                       ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                 결국 우리는 구조되어 검사와 치료를 받고 일상에 되돌아가게 되었다.                                   ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n");
+}
+void nomalend_epilog() {
+	printf("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                              ※노말엔딩※                                                           ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                 군인이라며 문을 두드리며 구조하러 왔다는 목소리에 우리는 방공호의 문을 열어주었다                   ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                 방공호의 문을 열자 오랜시간 힘들었던 우리를 반기는 군인들의 [총구]....                              ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                 \"아아 여기는 델타-3팀, 여기는 델타-3팀  살아있는 생존자 발견 살아있는 생존자 발견                   ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                 작전대로 즉시 사살 하겠다\"                                                                          ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                 핑....................................                                                              ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                 찢어지는 듯한 고음과 함께 몸이 데인듯이 뜨거워졌다.                                                 ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                 우리를 구조하러 온 것이 아니였나.......... 시아가 붉은색으로 물들었다                               ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                 이런 것을 위해 힘들게 버텨온것이였나..                                                              ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                 핑....................................                                                              ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                 또 한번의 고음과 함께 우리는 이 지옥에서 \"구조\"되었다.                                              ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┃                                                                                                                     ┃\n");
+	printf("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n");
+}
+int save(struct character_hp *all_hp, struct object *all_obj,int day)
+{
+	FILE *hp_data = fopen("hp_data.txt", "w");
+	FILE *obj_data = fopen("obj_data.txt", "w");
+	fprintf(hp_data, "%d %d %d %d %d %d %d %d %d %d", all_hp->a_hp, all_hp->b_hp, all_hp->c_hp,days,a_foodeat,a_watereat,b_foodeat,b_watereat,c_foodeat,c_watereat);
+	fprintf(obj_data, "%d %d %d %d ", all_obj->food, all_obj->water, all_obj->healpack, all_obj->gun);
+	if (hp_data == NULL || obj_data == NULL)
+	{
+		puts("저장하기 실패!");
+		Sleep(500);
+		return -1;
+	}
+	else
+	{
+		printf("저장성공");
+		Sleep(500);
+	}
+	fclose(hp_data);
+	fclose(obj_data);
+	return 0;
+}
+
+int load(struct character_hp const *all_hp, struct object const *all_obj, int day)
+{
+	char ptr_hp[20] = { 0, };
+	char ptr_obj[10] = { 0, };
+	FILE *hp_data = fopen("hp_data.txt", "r");
+	FILE *obj_data = fopen("obj_data.txt", "r");
+	for (int i = 0; i<20; i++)
+	{
+		fscanf(hp_data, "%d", &ptr_hp[i]);
+	}
+	hp.a_hp = ptr_hp[0];
+	hp.b_hp = ptr_hp[1];
+	hp.c_hp = ptr_hp[2];
+	days = ptr_hp[3];
+	a_foodeat = ptr_hp[4];
+	a_watereat = ptr_hp[5];
+	b_foodeat = ptr_hp[6];
+	b_watereat = ptr_hp[7];
+	c_foodeat = ptr_hp[8];
+	c_watereat = ptr_hp[9];
+	for (int i = 0; i < 10; i++)
+	{
+		fscanf(obj_data, "%d", &ptr_obj[i]);
+	}
+	obj.food = ptr_obj[0];
+	obj.water = ptr_obj[1];
+	obj.healpack = ptr_obj[2];
+	obj.gun = ptr_obj[3];
+}
+
+//utile
+void init()
+{
+	system("mode con cols=120 lines=35 | title 게임 제목");
+
+	HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_CURSOR_INFO ConsoleCursor;
+	ConsoleCursor.bVisible = 0;
+	ConsoleCursor.dwSize = 1;
+	SetConsoleCursorInfo(consoleHandle, &ConsoleCursor);
+
+}
+
+void gotoxy(int x, int y)
+{
+	HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+	COORD pos;
+	pos.X = x;
+	pos.Y = y;
+	SetConsoleCursorPosition(consoleHandle, pos);
+}
+
+void setColor(int forground, int background)
+{
+	HANDLE consolHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+	int code = forground + background * 16;
+	SetConsoleTextAttribute(consolHandle, code);
+}
